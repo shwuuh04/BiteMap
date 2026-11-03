@@ -13,14 +13,28 @@ import {
 import { db } from "./firebaseConfig.js";
 
 export default function SearchScreen({ navigation }) {
+const [search, setSearch] = useState("");
 
   return (
-    <View>
+      <View>
 
-    <Text>Search</Text>
+        <Text style={styles.header}>Find a Bite near you!</Text>
 
+        <TextInput
+          placeholder="Search..."
+          style={styles.searchBar}
+          value={search}
+          onChangeText={setSearch}
+        />
 
-    </View>
+        <TouchableOpacity
+          style={styles.searchButton}
+          onPress={() => {navigation.navigate("Map", { searchQuery: search });}}
+        >
+          <Text style={{ color: "#fff", fontSize: 16 }}>Search</Text>
+        </TouchableOpacity> 
+
+      </View>
   );
   
 }
@@ -30,8 +44,43 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#F5F5F5", // Light gray background
     padding: 30,
-    alignItems: "center", // Center items
+    alignItems: "center",
   },
+ 
+  searchBar: {
+    alignSelf: "center",
+    width: "80%",
+    height: 40,
+    borderColor: "#d46c35", // Orange border color
+    borderWidth: 1,
+    borderRadius: 20,
+
+    backgroundColor: "#fff",
+    paddingHorizontal: 15, // Padding inside the search bar
+    marginTop: 20,
+
+    fontSize: 16,
+  },
+
+  searchButton: {
+    backgroundColor: "#d46c35", // Orange background color
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 20,
+    marginTop: 20,
+    width: "30%",
+    alignItems: "center", // Center the text inside the button
+    alignSelf : "center", // center the button itself
+  },
+
+  header: {
+    fontSize: 24,
+    fontWeight: "bold",
+    color: "#d46c35", 
+    marginBottom: 20,
+    marginTop: 60,
+    textAlign: "center",
+  }
 
 
 });
