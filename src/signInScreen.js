@@ -41,6 +41,7 @@ const [password, setPassword] = useState("");
             secureTextEntry   
             />
 
+            {/* Updated with Copilot: use the route-provided setter to mark the user as signed in. */}
             <TouchableOpacity
             style={styles.signInButton}
             onPress={() => {route.params.setIsSignedIn(true); console.log("User signed in");}}

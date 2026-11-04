@@ -34,6 +34,7 @@ function MainTabNavigator({ route }) {
       component={MapScreen}
       />
       
+      {/* Added with Copilot: forwards the app-level auth setter to SettingsScreen. */}
       <Tab.Screen
       name="Settings"
       component={SettingsScreen}

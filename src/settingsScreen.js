@@ -79,6 +79,7 @@ export default function SettingsScreen({ navigation, route }) {
                   text: 'Log Out',
                   style: 'destructive',
                   onPress: () => {
+                    // Added with Copilot: clear the signed-in state and return to the sign-in screen.
                     route.params.setIsSignedIn(false);
                   },},]);}
         }>
