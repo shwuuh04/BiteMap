@@ -13,7 +13,7 @@ import {
 } from "react-native";
 import { db } from "./firebaseConfig.js";
 
-export default function SettingsScreen({ navigation }) {
+export default function SettingsScreen({ navigation, route }) {
   const username = "User";
 
   const [lightModeIsEnabled, setLightModeIsEnabled] = useState(false);
@@ -55,16 +55,34 @@ export default function SettingsScreen({ navigation }) {
                   style: 'destructive',
                   onPress: () => {
                     // Put your delete history logic here
-                  },
-                },
-              ]
-    );
-
-
-          }}
-        >
+                  },},]);}
+        }>
           <Text style={styles.buttonText}>Delete</Text>
+        </TouchableOpacity>
+      </View>
 
+      <View styles={styles.buttonContainer}>
+        <Text>Log Out</Text>
+        <TouchableOpacity
+          style={styles.logOutbutton}
+          onPress={() => {
+            Alert.alert(
+              // alert source: https://reactnative.dev/docs/alert
+              'Log Out',
+              'Are you sure you want to log out?',
+              [
+                {
+                  text: 'Cancel',
+                  style: 'cancel',
+                },
+                {
+                  text: 'Log Out',
+                  style: 'destructive',
+                  onPress: () => {
+                    route.params.setIsSignedIn(false);
+                  },},]);}
+        }>
+          <Text style={styles.buttonText}>Log Out</Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -109,6 +127,15 @@ const styles = StyleSheet.create({
 
   deleteSearchHistoryButton: {
     backgroundColor: "#d46c35", // Orange background color
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    width: "30%",
+    borderRadius: 20,
+    alignItems: "center", // Center the text inside the button
+  },
+
+  logOutbutton: {
+    backgroundColor: "#d43535", // Orange background color
     paddingVertical: 10,
     paddingHorizontal: 20,
     width: "30%",
