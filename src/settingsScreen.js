@@ -10,7 +10,9 @@ import {
   Keyboard,
   TouchableWithoutFeedback, 
   Switch
+  
 } from "react-native";
+// import { Switch } from "react-native-switch";
 import { db } from "./firebaseConfig.js";
 
 export default function SettingsScreen({ navigation, route }) {
@@ -20,24 +22,28 @@ export default function SettingsScreen({ navigation, route }) {
   const toggleLightModeSwitch = () => setLightModeIsEnabled(previousState => !previousState);
 
   return (
-    <View>
+    <View style={styles.container}>
 
       <Text style={styles.welcomeText}>Hello, {username}</Text>
 
       {/* switch source: https://reactnative.dev/docs/switch */}
-      <View styles={styles.buttonContainer}>
-        <Text>Light Mode</Text>
+      <View style={styles.buttonContainer}>
+        <Text style={styles.labelText}>Dark Mode</Text>
+
+        {/* Switch with text source: https://stackoverflow.com/questions/40865391/how-to-show-text-yes-no-inside-a-switch-in-react-native */}
         <Switch
           trackColor={{false: '#767577', true: '#f6d6a4'}}
           thumbColor={lightModeIsEnabled ? '#d46c35' : '#f4f3f4'}
           ios_backgroundColor="#3e3e3e"
           onValueChange={toggleLightModeSwitch}
           value={lightModeIsEnabled}
+          // activeText={'On'}
+          // inActiveText={'Off'}
         />
       </View>
 
-      <View styles={styles.buttonContainer}>
-        <Text>Clear Search History</Text>
+      <View style={styles.buttonContainer}>
+        <Text style={styles.labelText}>Clear Search History</Text>
         <TouchableOpacity
           style={styles.deleteSearchHistoryButton}
           onPress={() => {
@@ -61,8 +67,8 @@ export default function SettingsScreen({ navigation, route }) {
         </TouchableOpacity>
       </View>
 
-      <View styles={styles.buttonContainer}>
-        <Text>Log Out</Text>
+      <View style={styles.buttonContainer}>
+        <Text style={styles.labelText}>Log Out</Text>
         <TouchableOpacity
           style={styles.logOutbutton}
           onPress={() => {
@@ -110,6 +116,8 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     width: "100%",
+    alignItems: "center",
+    marginBottom: 20,
   },
 
   toggleLightModeButton: {
@@ -123,6 +131,10 @@ const styles = StyleSheet.create({
 
   buttonText: {
     color: "#fff",
+    fontSize: 16,
+  },
+
+  labelText: {
     fontSize: 16,
   },
 

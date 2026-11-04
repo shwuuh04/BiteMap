@@ -11,7 +11,7 @@ import {
   TouchableWithoutFeedback 
 } from "react-native";
 import { db, auth } from "./firebaseConfig.js";
-import { getAuth, sendSignInLinkToEmail, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
 
 
 export default function SignInScreen({ navigation, route }) {
