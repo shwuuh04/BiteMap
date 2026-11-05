@@ -10,12 +10,50 @@ import {
   Keyboard,
   TouchableWithoutFeedback 
 } from "react-native";
-import { db } from "./firebaseConfig.js";
+import { db, auth } from "./firebaseConfig.js";
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
+
 
 export default function SignInScreen({ navigation, route }) {
-const [user, setUser] = useState("");
+const [activeTab, setActiveTab] = useState('signin');
+const [email, setEmail] = useState("");
 const [password, setPassword] = useState("");
 
+const fbAuth = auth;
+
+// Handles the submit button. Based on which tab is active, it will either sign in or sign up the user. After successful sign in/up, set the signed-in state in App.js to true, which switches the screen to the SearchScreen (main app).
+async function handleSubmit() {
+    if (!email || !password) {
+      Alert.alert('Error', 'Please fill out all fields and try again.');
+      return;
+    }
+
+    if (activeTab === 'signin') {
+        try {
+            const response = await signInWithEmailAndPassword(auth, email, password);
+            route.params.setIsSignedIn(true);
+        }
+        catch (error) {
+            console.log(error.message);
+            alert(error.message);
+        };
+      console.log('Logging in with:', { email, password });
+    } else {
+        try {
+            const response = await createUserWithEmailAndPassword(
+                fbAuth,
+                email,
+                password,
+            );
+            route.params.setIsSignedIn(true);
+        }
+        catch (error) {
+            console.log(error.message);
+            alert(error.message);
+        };
+        console.log('Signing up with:', { email, password });
+    }
+}
 
   return (
       <View>
@@ -23,14 +61,34 @@ const [password, setPassword] = useState("");
 
         <View style={styles.signInContainer}>
             <Text style={styles.title}>BiteMap</Text>
-            <Text style={styles.body}>Returning user?</Text>
-            <Text style={styles.subtitle}>Log In</Text>
+
+{/* Tab between sign in / sign up modes */}
+        <View style={styles.tabContainer}>
+          <TouchableOpacity 
+            style={[styles.tabButton, activeTab === 'signin' && styles.activeTabButton]} 
+            onPress={() => setActiveTab('signin')}
+          >
+            <Text style={[styles.tabText, activeTab === 'signin' && styles.activeTabText]}>Sign In</Text>
+          </TouchableOpacity>
+          
+          <TouchableOpacity 
+            style={[styles.tabButton, activeTab === 'signup' && styles.activeTabButton]} 
+            onPress={() => setActiveTab('signup')}
+          >
+            <Text style={[styles.tabText, activeTab === 'signup' && styles.activeTabText]}>Sign Up</Text>
+          </TouchableOpacity>
+        </View>
+
+
+
+            <Text style={styles.subtitle}>{activeTab === 'signin' ? 'Sign in to Existing Account' : 'Create an Account'}</Text>
 
             <TextInput
-            placeholder="Username"
+            placeholder="Email"
             style={styles.textInputBar}
-            value={user}
-            onChangeText={setUser}
+            value={email}
+            onChangeText={setEmail}
+            keyboardType="email-address"
             />
                 
             <TextInput
@@ -38,16 +96,18 @@ const [password, setPassword] = useState("");
             style={styles.textInputBar}
             value={password}
             onChangeText={setPassword}
-            secureTextEntry   
+            secureTextEntry={true}
             />
 
             {/* Updated with Copilot: use the route-provided setter to mark the user as signed in. */}
             <TouchableOpacity
             style={styles.signInButton}
-            onPress={() => {route.params.setIsSignedIn(true); console.log("User signed in");}}
+            onPress={() => {handleSubmit(); console.log("submitted");}}
             >
-            <Text style={{ color: "#fff", fontSize: 16 }}>Sign In</Text>
+            <Text style={styles.signUpText}>{activeTab === 'signin' ? 'Sign In' : 'Sign Up'}</Text>
             </TouchableOpacity> 
+
+            
         </View>
 
 
@@ -126,12 +186,13 @@ const styles = StyleSheet.create({
 
   body: {
     fontSize: 18,
-    color: "#d46c35", 
-    marginBottom: 20,
+    color: "#3fa8bd", 
+    marginTop: 20,
     textAlign: "center",
+    textDecorationLine: "underline",
   },    
 
-  textInputBar: {
+   textInputBar: {
     height: 40,
     borderColor: "#d46c35",
     borderWidth: 1,
@@ -150,6 +211,37 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     marginTop: 20,
 
+  },
+
+ tabContainer: {
+    flexDirection: 'row',
+    borderWidth: 1,
+    borderColor: '#d46c35',
+    borderRadius: 25,
+    overflow: 'hidden',
+    marginBottom: 20,
+    width: '100%',
+  },
+  tabButton: {
+    flex: 1,
+    paddingVertical: 12,
+    alignItems: 'center',
+    backgroundColor: '#fff',
+  },
+  activeTabButton: {
+    backgroundColor: '#d46c35',
+  },
+  tabText: {
+    color: '#d46c35',
+    fontWeight: '600',
+  },
+  activeTabText: {
+    color: '#fff',
+  },
+
+  signUpText: {
+    color: "#fff",
+    fontSize: 16,
   },
 
 });
