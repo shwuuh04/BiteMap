@@ -1,3 +1,8 @@
+// Dependencies required. Some may be missing from here. The terminal will tell you which ones are needed if you try to run the app.
+// npx expo install @maplibre/maplibre-react-native
+// npx expo install expo-location
+
+
 
 import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";

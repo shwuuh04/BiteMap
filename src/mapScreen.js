@@ -1,5 +1,5 @@
 import { addDoc, collection, getDocs, query, where } from "firebase/firestore";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Alert,
   StyleSheet,
@@ -10,11 +10,27 @@ import {
   Keyboard,
   TouchableWithoutFeedback,
 } from "react-native";
+import * as Location from "expo-location";
 import { db } from "./firebaseConfig.js";
 //import { Map, Camera, Marker } from "@maplibre/maplibre-react-native";
 import FoodTruckMap from "./components/FoodTruckMap.js";
 
-export default function MapScreen({ navigation }) {
+// Code from https://draftbit.com/answers/get-the-users-location-in-expo/ with changes made cuz idk what Promise.Race is
+export async function getUserLocation() {
+  const { status } = await Location.requestForegroundPermissionsAsync();
+  if (status !== "granted") return null;
+
+  try {
+    return await Location.getCurrentPositionAsync({
+      accuracy: Location.Accuracy.Balanced,
+    });
+  } catch {
+    return await Location.getLastKnownPositionAsync();
+  }
+}
+
+
+export default function MapScreen({ navigation, route }) {
   /* 
   //retrieve location data from firebase 
 
@@ -30,6 +46,15 @@ export default function MapScreen({ navigation }) {
   />
 ))}
   */
+
+  // getting the search from search screen. 
+  const search = route?.params?.searchQuery || "";
+  // getting the user's location. src: https://draftbit.com/answers/get-the-users-location-in-expo/
+  const [location, setLocation] = useState(null);
+
+  useEffect(() => {
+  getUserLocation().then(setLocation);
+}, []);
 
   // Temporary food truck data
   const foodTrucks = [
