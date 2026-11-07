@@ -53,8 +53,8 @@ export default function MapScreen({ navigation, route }) {
   const [location, setLocation] = useState(null);
 
   useEffect(() => {
-  getUserLocation().then(setLocation);
-}, []);
+    getUserLocation().then(setLocation);
+  }, []);
 
   // Temporary food truck data
   const foodTrucks = [
@@ -83,7 +83,10 @@ export default function MapScreen({ navigation, route }) {
 
   return (
     <View style={styles.container}>
-      <FoodTruckMap foodTrucks={foodTrucks} />
+      <FoodTruckMap
+        foodTrucks={foodTrucks} // passing the list of trucks
+        userLocation={location?.coords ?? null} // passing the user's location. if user didn't allow perms (earlier in code) then it is null.
+      />
     </View>
   );
 }

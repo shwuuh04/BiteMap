@@ -1,9 +1,10 @@
 import React from "react";
 import { WebView } from "react-native-webview";
 
-export default function FoodTruckMap({ foodTrucks = [] }) {
-  // Convert the food truck data into JSON for Leaflet
+export default function FoodTruckMap({ foodTrucks = [], userLocation = null }) {
+  // Convert the data into JSON for Leaflet
   const trucksJSON = JSON.stringify(foodTrucks).replace(/</g, "\\u003c");
+  const userLocationJSON = JSON.stringify(userLocation).replace(/</g, "\\u003c");
 
   // via chatgpt sets default view to vancouver
   const mapHTML = `
@@ -35,11 +36,12 @@ export default function FoodTruckMap({ foodTrucks = [] }) {
         <div id="map"></div>
 
         <script>
-          // Create the map defualted to vancouver
-          const map = L.map("map").setView(
-            [49.2827, -123.1207],
-            13
-          );
+          // Create the map at user's location. if location not given then default to vancouver
+          const userLocation = ${userLocationJSON};
+          const initialCenter = userLocation
+            ? [userLocation.latitude, userLocation.longitude]
+            : [49.2827, -123.1207];
+          const map = L.map("map").setView(initialCenter, 13);
 
           // Add OpenStreetMap tiles
           L.tileLayer(
@@ -53,6 +55,21 @@ export default function FoodTruckMap({ foodTrucks = [] }) {
 
           // Food truck information from React Native
           const foodTrucks = ${trucksJSON};
+
+
+          // place a marker at the user's location
+          if (userLocation) {
+            L.circleMarker(
+              [userLocation.latitude, userLocation.longitude],
+              {
+                radius: 8,
+                color: "#ffffff",
+                fillColor: "#007AFF",
+                fillOpacity: 1,
+                weight: 2,
+              }
+            ).addTo(map).bindPopup("Your location");
+          }
 
           // Add a marker for each food truck
           foodTrucks.forEach((truck) => {
