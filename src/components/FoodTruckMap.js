@@ -1,10 +1,26 @@
-import React from "react";
+import React, { forwardRef, useImperativeHandle, useRef } from "react";
 import { WebView } from "react-native-webview";
 
-export default function FoodTruckMap({ foodTrucks = [], userLocation = null }) {
+const FoodTruckMap = forwardRef(function FoodTruckMap(
+  { foodTrucks = [], userLocation = null },
+  ref
+) {
+  const webViewRef = useRef(null);
   // Convert the data into JSON for Leaflet
   const trucksJSON = JSON.stringify(foodTrucks).replace(/</g, "\\u003c");
   const userLocationJSON = JSON.stringify(userLocation).replace(/</g, "\\u003c");
+
+  // Created by CoPilot. This code makes the recenter function visible to the mapScreen.js so it can call the function when the recenter button is pressed.
+  useImperativeHandle(ref, () => ({
+    recenter(latitude, longitude) {
+      webViewRef.current?.injectJavaScript(`
+        if (typeof map !== "undefined") {
+          map.setView([${latitude}, ${longitude}], 13);
+        }
+        true;
+      `);
+    },
+  }));
 
   // via chatgpt sets default view to vancouver
   const mapHTML = `
@@ -68,7 +84,7 @@ export default function FoodTruckMap({ foodTrucks = [], userLocation = null }) {
                 fillOpacity: 1,
                 weight: 2,
               }
-            ).addTo(map).bindPopup("Your location");
+            ).addTo(map);
           }
 
           // Add a marker for each food truck
@@ -92,6 +108,7 @@ export default function FoodTruckMap({ foodTrucks = [], userLocation = null }) {
 
   return (
     <WebView
+      ref={webViewRef}
       style={{ flex: 1 }}
       originWhitelist={["*"]}
       source={{ html: mapHTML }}
@@ -99,4 +116,6 @@ export default function FoodTruckMap({ foodTrucks = [], userLocation = null }) {
       domStorageEnabled={true}
     />
   );
-}
+});
+
+export default FoodTruckMap;

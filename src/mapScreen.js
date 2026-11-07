@@ -1,5 +1,5 @@
 import { addDoc, collection, getDocs, query, where } from "firebase/firestore";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
   Alert,
   StyleSheet,
@@ -51,10 +51,27 @@ export default function MapScreen({ navigation, route }) {
   const search = route?.params?.searchQuery || "";
   // getting the user's location. src: https://draftbit.com/answers/get-the-users-location-in-expo/
   const [location, setLocation] = useState(null);
+  const mapRef = useRef(null);
 
   useEffect(() => {
     getUserLocation().then(setLocation);
   }, []);
+
+  // Recenter function created by CoPilot. 
+  function recenterMap() {
+    if (!location?.coords) {
+      Alert.alert(
+        "Location unavailable",
+        "Allow location access to recenter the map."
+      );
+      return;
+    }
+
+    mapRef.current?.recenter(
+      location.coords.latitude,
+      location.coords.longitude
+    );
+  }
 
   // Temporary food truck data
   const foodTrucks = [
@@ -84,9 +101,17 @@ export default function MapScreen({ navigation, route }) {
   return (
     <View style={styles.container}>
       <FoodTruckMap
+        ref={mapRef}
         foodTrucks={foodTrucks} // passing the list of trucks
         userLocation={location?.coords ?? null} // passing the user's location. if user didn't allow perms (earlier in code) then it is null.
       />
+      <TouchableOpacity
+        style={styles.recenterButton}
+        onPress={recenterMap}
+      >
+        <View style={styles.recenterCircle} />
+      </TouchableOpacity>
+
     </View>
   );
 }
@@ -94,6 +119,31 @@ export default function MapScreen({ navigation, route }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  recenterButton: {
+    position: "absolute",
+    right: 20,
+    bottom: 40,
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "#fff",
+    zIndex: 10,
+    elevation: 4,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+  },
+  recenterCircle: {
+    width: 20,
+    height: 20,
+    borderRadius: 10,
+    backgroundColor: "#007AFF",
+    borderWidth: 2,
+    borderColor: "#fff",
   },
 });
 
