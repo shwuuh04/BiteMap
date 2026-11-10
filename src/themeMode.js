@@ -9,7 +9,7 @@ export function ThemeProvider({ children }) {
   const [isDark, setIsDark] = useState(false);
   const [isLoaded, setIsLoaded] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
-  const saveInProgress = useRef(false);
+  const saveQueue = useRef(Promise.resolve());
 
   // Read the saved preference when the app starts.
   useEffect(() => {
@@ -32,23 +32,26 @@ export function ThemeProvider({ children }) {
 
   // Save the choice, then update the app's appearance.
   async function changeTheme(nextIsDark) {
-    if (!isLoaded || saveInProgress.current) return;
+    if (!isLoaded) return false;
 
-    saveInProgress.current = true;
-    setIsSaving(true);
-
-    try {
-      await AsyncStorage.setItem(
-        STORAGE_KEY,
-        nextIsDark ? "dark" : "light"
-      );
-      setIsDark(nextIsDark);
-    } catch {
-      Alert.alert("Couldn't save theme", "Please try again.");
-    } finally {
-      saveInProgress.current = false;
-      setIsSaving(false);
-    }
+    const save = saveQueue.current.then(async () => {
+      setIsSaving(true);
+      try {
+        await AsyncStorage.setItem(
+          STORAGE_KEY,
+          nextIsDark ? "dark" : "light"
+        );
+        setIsDark(nextIsDark);
+        return true;
+      } catch {
+        Alert.alert("Couldn't save theme", "Please try again.");
+        return false;
+      } finally {
+        setIsSaving(false);
+      }
+    });
+    saveQueue.current = save;
+    return save;
   }
 
   return (

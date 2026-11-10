@@ -13,10 +13,8 @@ import {
 } from "react-native";
 // import { Switch } from "react-native-switch";
 import { db } from "./firebaseConfig.js";
-import {
-  settingsStyles as styles,
-  SETTINGS_SWITCH_COLORS,
-} from "./styles.js";
+import { settingsStyles as styles } from "./styles.js";
+import { clearSearchHistory } from "./searchScreen.js";
 
 export default function SettingsScreen({ navigation, route }) {
   const username = "User";
@@ -36,13 +34,9 @@ export default function SettingsScreen({ navigation, route }) {
 
         {/* Switch with text source: https://stackoverflow.com/questions/40865391/how-to-show-text-yes-no-inside-a-switch-in-react-native */}
         <Switch
-          trackColor={SETTINGS_SWITCH_COLORS.track}
-          thumbColor={
-            isDark
-              ? SETTINGS_SWITCH_COLORS.thumb.dark
-              : SETTINGS_SWITCH_COLORS.thumb.light
-          }
-          ios_backgroundColor={SETTINGS_SWITCH_COLORS.iosBackground}
+          trackColor={{ false: "#767577", true: "#f6d6a4" }}
+          thumbColor={isDark ? "#d46c35" : "#f4f3f4"}
+          ios_backgroundColor="#3e3e3e"
           onValueChange={changeTheme}
           value={isDark}
           disabled={isSaving}
@@ -66,8 +60,15 @@ export default function SettingsScreen({ navigation, route }) {
                 {
                   text: "Delete",
                   style: "destructive",
-                  onPress: () => {
-                    // Put your delete history logic here
+                  onPress: async () => {
+                    try {
+                      await clearSearchHistory();
+                    } catch {
+                      Alert.alert(
+                        "Couldn't clear search history",
+                        "Please try again."
+                      );
+                    }
                   },
                 },
               ],
@@ -95,9 +96,10 @@ export default function SettingsScreen({ navigation, route }) {
                 {
                   text: "Log Out",
                   style: "destructive",
-                  onPress: () => {
-                    // Added with Copilot: clear the signed-in state and return to the sign-in screen.
-                    route.params.setIsSignedIn(false);
+                  onPress: async () => {
+                    if (await changeTheme(false)) {
+                      route.params.setIsSignedIn(false);
+                    }
                   },
                 },
               ],
