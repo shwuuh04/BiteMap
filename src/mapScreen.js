@@ -2,7 +2,6 @@ import { addDoc, collection, getDocs, query, where } from "firebase/firestore";
 import { useState, useEffect, useRef } from "react";
 import {
   Alert,
-  StyleSheet,
   Text,
   TextInput,
   TouchableOpacity,
@@ -14,6 +13,7 @@ import * as Location from "expo-location";
 import { db } from "./firebaseConfig.js";
 //import { Map, Camera, Marker } from "@maplibre/maplibre-react-native";
 import FoodTruckMap from "./components/FoodTruckMap.js";
+import { mapStyles as styles } from "./styles.js";
 
 // Code from https://draftbit.com/answers/get-the-users-location-in-expo/ with changes made cuz idk what Promise.Race is
 export async function getUserLocation() {
@@ -115,46 +115,3 @@ export default function MapScreen({ navigation, route }) {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  recenterButton: {
-    position: "absolute",
-    right: 20,
-    bottom: 40,
-    width: 56,
-    height: 56,
-    borderRadius: 28,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "#fff",
-    zIndex: 10,
-    elevation: 4,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-  },
-  recenterCircle: {
-    width: 20,
-    height: 20,
-    borderRadius: 10,
-    backgroundColor: "#007AFF",
-    borderWidth: 2,
-    borderColor: "#fff",
-  },
-});
-
-/*
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#F5F5F5", // Light gray background
-    padding: 30,
-    alignItems: "center", // Center items
-  },
-});
-*/

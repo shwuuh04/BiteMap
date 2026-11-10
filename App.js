@@ -19,6 +19,7 @@ import SearchScreen from "./src/searchScreen.js";
 import MapScreen from "./src/mapScreen.js";
 import SettingsScreen from "./src/settingsScreen.js";
 import SignInScreen from "./src/signInScreen.js";
+import { COLORS } from "./src/styles.js";
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -30,8 +31,8 @@ function MainTabNavigator({ route }) {
       screenOptions={{
         tabBarShowIcon: false,
         headerShown: true,
-        tabBarActiveTintColor: "#d46c35",
-        tabBarInactiveTintColor: "gray",
+        tabBarActiveTintColor: COLORS.accent,
+        tabBarInactiveTintColor: COLORS.inactive,
       }}
     >
       <Tab.Screen name="Search" component={SearchScreen} />
@@ -70,11 +71,11 @@ function AppContent() {
     ...baseTheme,
     colors: {
       ...baseTheme.colors,
-      primary: "#d46c35",
-      background: isDark ? "#121212" : "#F5F5F5",
-      card: isDark ? "#222222" : "#FFFFFF",
-      text: isDark ? "#F5F5F5" : "#111111",
-      border: isDark ? "#444444" : "#DDDDDD",
+      primary: COLORS.accent,
+      background: isDark ? COLORS.darkBackground : COLORS.background,
+      card: isDark ? COLORS.darkCard : COLORS.lightCard,
+      text: isDark ? COLORS.darkText : COLORS.lightText,
+      border: isDark ? COLORS.darkBorder : COLORS.lightBorder,
     },
   };
   return (

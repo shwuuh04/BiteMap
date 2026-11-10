@@ -1,5 +1,10 @@
 import React, { forwardRef, useImperativeHandle, useRef } from "react";
 import { WebView } from "react-native-webview";
+import {
+  MAP_DOCUMENT_STYLES,
+  MAP_MARKER_STYLES,
+  mapStyles,
+} from "../styles.js";
 
 const FoodTruckMap = forwardRef(function FoodTruckMap(
   { foodTrucks = [], userLocation = null },
@@ -38,14 +43,7 @@ const FoodTruckMap = forwardRef(function FoodTruckMap(
         <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js">
         </script>
 
-        <style>
-          html, body, #map {
-            height: 100%;
-            width: 100%;
-            margin: 0;
-            padding: 0;
-          }
-        </style>
+        <style>${MAP_DOCUMENT_STYLES}</style>
       </head>
 
       <body>
@@ -78,11 +76,11 @@ const FoodTruckMap = forwardRef(function FoodTruckMap(
             L.circleMarker(
               [userLocation.latitude, userLocation.longitude],
               {
-                radius: 8,
-                color: "#ffffff",
-                fillColor: "#007AFF",
-                fillOpacity: 1,
-                weight: 2,
+                radius: ${MAP_MARKER_STYLES.user.radius},
+                color: "${MAP_MARKER_STYLES.user.color}",
+                fillColor: "${MAP_MARKER_STYLES.user.fillColor}",
+                fillOpacity: ${MAP_MARKER_STYLES.user.fillOpacity},
+                weight: ${MAP_MARKER_STYLES.user.weight},
               }
             ).addTo(map);
           }
@@ -109,7 +107,7 @@ const FoodTruckMap = forwardRef(function FoodTruckMap(
   return (
     <WebView
       ref={webViewRef}
-      style={{ flex: 1 }}
+      style={mapStyles.webView}
       originWhitelist={["*"]}
       source={{ html: mapHTML }}
       javaScriptEnabled={true}

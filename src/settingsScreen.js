@@ -3,7 +3,6 @@ import { useTheme } from "@react-navigation/native";
 import { useAppTheme } from "./themeMode.js";
 import {
   Alert,
-  StyleSheet,
   Text,
   TextInput,
   TouchableOpacity,
@@ -14,6 +13,10 @@ import {
 } from "react-native";
 // import { Switch } from "react-native-switch";
 import { db } from "./firebaseConfig.js";
+import {
+  settingsStyles as styles,
+  SETTINGS_SWITCH_COLORS,
+} from "./styles.js";
 
 export default function SettingsScreen({ navigation, route }) {
   const username = "User";
@@ -33,9 +36,13 @@ export default function SettingsScreen({ navigation, route }) {
 
         {/* Switch with text source: https://stackoverflow.com/questions/40865391/how-to-show-text-yes-no-inside-a-switch-in-react-native */}
         <Switch
-          trackColor={{ false: "#767577", true: "#f6d6a4" }}
-          thumbColor={isDark ? "#d46c35" : "#f4f3f4"}
-          ios_backgroundColor="#3e3e3e"
+          trackColor={SETTINGS_SWITCH_COLORS.track}
+          thumbColor={
+            isDark
+              ? SETTINGS_SWITCH_COLORS.thumb.dark
+              : SETTINGS_SWITCH_COLORS.thumb.light
+          }
+          ios_backgroundColor={SETTINGS_SWITCH_COLORS.iosBackground}
           onValueChange={changeTheme}
           value={isDark}
           disabled={isSaving}
@@ -103,63 +110,3 @@ export default function SettingsScreen({ navigation, route }) {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#F5F5F5", // Light gray background
-    padding: 30,
-    alignItems: "center", // Center items
-  },
-
-  welcomeText: {
-    fontSize: 24,
-    fontWeight: "bold",
-    marginBottom: 20,
-    marginTop: 20,
-  },
-
-  buttonContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    width: "100%",
-    alignItems: "center",
-    marginBottom: 20,
-  },
-
-  toggleLightModeButton: {
-    backgroundColor: "#d46c35", // Orange background color
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    borderRadius: 20,
-    marginTop: 20,
-    width: "20%",
-  },
-
-  buttonText: {
-    color: "#fff",
-    fontSize: 16,
-  },
-
-  labelText: {
-    fontSize: 16,
-  },
-
-  deleteSearchHistoryButton: {
-    backgroundColor: "#d46c35", // Orange background color
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    width: "30%",
-    borderRadius: 20,
-    alignItems: "center", // Center the text inside the button
-  },
-
-  logOutbutton: {
-    backgroundColor: "#d43535", // Orange background color
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    width: "30%",
-    borderRadius: 20,
-    alignItems: "center", // Center the text inside the button
-  },
-});

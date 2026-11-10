@@ -2,7 +2,6 @@ import { addDoc, collection, getDocs, query, where } from "firebase/firestore";
 import { useState } from "react";
 import {
   Alert,
-  StyleSheet,
   Text,
   TextInput,
   TouchableOpacity,
@@ -12,6 +11,7 @@ import {
 } from "react-native";
 import { db, auth } from "./firebaseConfig.js";
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
+import { signInStyles as styles } from "./styles.js";
 
 
 export default function SignInScreen({ navigation, route }) {
@@ -115,133 +115,3 @@ async function handleSubmit() {
   );
   
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#F5F5F5", // Light gray background
-    padding: 30,
-    alignItems: "center",
-  },
- 
-  searchBar: {
-    alignSelf: "center",
-    width: "80%",
-    height: 40,
-    borderColor: "#d46c35", // Orange border color
-    borderWidth: 1,
-    borderRadius: 20,
-
-    backgroundColor: "#fff",
-    paddingHorizontal: 15, // Padding inside the search bar
-    marginTop: 20,
-
-    fontSize: 16,
-  },
-
-  searchButton: {
-    backgroundColor: "#d46c35", // Orange background color
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    borderRadius: 20,
-    marginTop: 20,
-    width: "30%",
-    alignItems: "center", // Center the text inside the button
-    alignSelf : "center", // center the button itself
-  },
-
-  header: {
-    fontSize: 24,
-    fontWeight: "bold",
-    color: "#d46c35", 
-    marginBottom: 20,
-    marginTop: 60,
-    textAlign: "center",
-  },
-
-  signInContainer: {
-    alignItems: "center",
-    alignSelf: "center",
-    justifyContent: "center",
-    marginTop: 20,
-    width: "80%",
-  },
-
-  title: {
-    fontSize: 36,
-    fontWeight: "bold",
-    color: "#d46c35", 
-    marginBottom: 20,
-    marginTop: 220,
-    textAlign: "center",
-  },
-
-  subtitle: {
-    fontSize: 24,
-    fontWeight: "bold",
-    color: "#d46c35", 
-    marginBottom: 10,
-    textAlign: "center",
-  },
-
-  body: {
-    fontSize: 18,
-    color: "#3fa8bd", 
-    marginTop: 20,
-    textAlign: "center",
-    textDecorationLine: "underline",
-  },    
-
-   textInputBar: {
-    height: 40,
-    borderColor: "#d46c35",
-    borderWidth: 1,
-    borderRadius: 20,
-    backgroundColor: "#fff",
-    width: "100%",
-    paddingHorizontal: 15,
-    marginTop: 20,
-    fontSize: 16,
-  },
-
-  signInButton: {
-    backgroundColor: "#d46c35", // Orange background color
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    borderRadius: 20,
-    marginTop: 20,
-
-  },
-
- tabContainer: {
-    flexDirection: 'row',
-    borderWidth: 1,
-    borderColor: '#d46c35',
-    borderRadius: 25,
-    overflow: 'hidden',
-    marginBottom: 20,
-    width: '100%',
-  },
-  tabButton: {
-    flex: 1,
-    paddingVertical: 12,
-    alignItems: 'center',
-    backgroundColor: '#fff',
-  },
-  activeTabButton: {
-    backgroundColor: '#d46c35',
-  },
-  tabText: {
-    color: '#d46c35',
-    fontWeight: '600',
-  },
-  activeTabText: {
-    color: '#fff',
-  },
-
-  signUpText: {
-    color: "#fff",
-    fontSize: 16,
-  },
-
-});
