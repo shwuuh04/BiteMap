@@ -49,7 +49,7 @@ async function handleSubmit() {
         }
         catch (error) {
             console.log(error.message);
-            alert(error.message);
+            alert("Invalid email. Try again.");
         };
         console.log('Signing up with:', { email, password });
     }
