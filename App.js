@@ -3,13 +3,17 @@
 // npx expo install expo-location
 // npx expo install @react-native-async-storage/async-storage
 
-
-
-import { NavigationContainer } from "@react-navigation/native";
+import {
+  NavigationContainer,
+  DefaultTheme,
+  DarkTheme,
+} from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
-import { react, useState } from "react";
+import { useState } from "react";
+import { StatusBar } from "expo-status-bar";
+import { ThemeProvider, useAppTheme } from "./src/themeMode.js";
 
 import SearchScreen from "./src/searchScreen.js";
 import MapScreen from "./src/mapScreen.js";
@@ -30,51 +34,69 @@ function MainTabNavigator({ route }) {
         tabBarInactiveTintColor: "gray",
       }}
     >
-      <Tab.Screen
-      name="Search"
-      component={SearchScreen}
-      />
-      
-      <Tab.Screen
-      name="Map"
-      component={MapScreen}
-      />
-      
+      <Tab.Screen name="Search" component={SearchScreen} />
+
+      <Tab.Screen name="Map" component={MapScreen} />
+
       {/* Added with Copilot: forwards the app-level auth setter to SettingsScreen. */}
       <Tab.Screen
-      name="Settings"
-      component={SettingsScreen}
-      initialParams={{ setIsSignedIn: route.params.setIsSignedIn }}
-      >
-      </Tab.Screen>
+        name="Settings"
+        component={SettingsScreen}
+        initialParams={{ setIsSignedIn: route.params.setIsSignedIn }}
+      ></Tab.Screen>
     </Tab.Navigator>
   );
 }
 
-// NavigationContainer created with the use of ChatGPT for passing the props to the MainTabNavigator. 
+// NavigationContainer created with the use of ChatGPT for passing the props to the MainTabNavigator.
 export default function App() {
-const [isSignedIn, setIsSignedIn] = useState(false);
-
   return (
-    <NavigationContainer>
-        <Stack.Navigator screenOptions={{ headerShown: false }}>
+    <ThemeProvider>
+      <AppContent />
+    </ThemeProvider>
+  );
+}
+
+function AppContent() {
+  const [isSignedIn, setIsSignedIn] = useState(false);
+  const { isDark, isLoaded } = useAppTheme();
+
+  // Wait for the saved preference before showing the app.
+  if (!isLoaded) return null;
+
+  const baseTheme = isDark ? DarkTheme : DefaultTheme;
+
+  const theme = {
+    ...baseTheme,
+    colors: {
+      ...baseTheme.colors,
+      primary: "#d46c35",
+      background: isDark ? "#121212" : "#F5F5F5",
+      card: isDark ? "#222222" : "#FFFFFF",
+      text: isDark ? "#F5F5F5" : "#111111",
+      border: isDark ? "#444444" : "#DDDDDD",
+    },
+  };
+  return (
+    <NavigationContainer theme={theme}>
+      <StatusBar style={isDark ? "light" : "dark"} />
+      <Stack.Navigator screenOptions={{ headerShown: false }}>
         {isSignedIn ? (
           // Signed In: render all the screens in MainTabNavigator (SearchScreen, MapScreen, and SettingsScreen)
           <Stack.Screen
-            name="SignedIn" 
-            initialParams={{ setIsSignedIn }} 
+            name="SignedIn"
+            initialParams={{ setIsSignedIn }}
             component={MainTabNavigator}
           />
         ) : (
-          // Signed Out: unloads all tabs and only renders SignInScreen 
+          // Signed Out: unloads all tabs and only renders SignInScreen
           <Stack.Screen
             name="SignedOut"
-            initialParams={{ setIsSignedIn }} 
+            initialParams={{ setIsSignedIn }}
             component={SignInScreen}
           />
         )}
       </Stack.Navigator>
-        
     </NavigationContainer>
   );
 }
