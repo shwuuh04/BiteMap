@@ -1,16 +1,16 @@
 import { addDoc, collection, getDocs, query, where } from "firebase/firestore";
-import { useState } from "react";
+import { useTheme } from "@react-navigation/native";
+import { useAppTheme } from "./themeMode.js";
 import {
   Alert,
   StyleSheet,
   Text,
   TextInput,
   TouchableOpacity,
-  View, 
+  View,
   Keyboard,
-  TouchableWithoutFeedback, 
-  Switch
-  
+  TouchableWithoutFeedback,
+  Switch,
 } from "react-native";
 // import { Switch } from "react-native-switch";
 import { db } from "./firebaseConfig.js";
@@ -18,83 +18,90 @@ import { db } from "./firebaseConfig.js";
 export default function SettingsScreen({ navigation, route }) {
   const username = "User";
 
-  const [lightModeIsEnabled, setLightModeIsEnabled] = useState(false);
-  const toggleLightModeSwitch = () => setLightModeIsEnabled(previousState => !previousState);
+  const { isDark, isSaving, changeTheme } = useAppTheme();
+  const { colors } = useTheme();
 
   return (
-    <View style={styles.container}>
-
-      <Text style={styles.welcomeText}>Hello, {username}</Text>
+    <View style={[styles.container, { backgroundColor: colors.background }]}>
+      <Text style={[styles.welcomeText, { color: colors.text }]}>
+        Hello, {username}
+      </Text>
 
       {/* switch source: https://reactnative.dev/docs/switch */}
       <View style={styles.buttonContainer}>
-        <Text style={styles.labelText}>Dark Mode</Text>
+        <Text style={[styles.labelText, { color: colors.text }]}>Dark Mode</Text>
 
         {/* Switch with text source: https://stackoverflow.com/questions/40865391/how-to-show-text-yes-no-inside-a-switch-in-react-native */}
         <Switch
-          trackColor={{false: '#767577', true: '#f6d6a4'}}
-          thumbColor={lightModeIsEnabled ? '#d46c35' : '#f4f3f4'}
+          trackColor={{ false: "#767577", true: "#f6d6a4" }}
+          thumbColor={isDark ? "#d46c35" : "#f4f3f4"}
           ios_backgroundColor="#3e3e3e"
-          onValueChange={toggleLightModeSwitch}
-          value={lightModeIsEnabled}
-          // activeText={'On'}
-          // inActiveText={'Off'}
+          onValueChange={changeTheme}
+          value={isDark}
+          disabled={isSaving}
         />
       </View>
 
       <View style={styles.buttonContainer}>
-        <Text style={styles.labelText}>Clear Search History</Text>
+        <Text style={[styles.labelText, { color: colors.text }]}>Clear Search History</Text>
         <TouchableOpacity
           style={styles.deleteSearchHistoryButton}
           onPress={() => {
             Alert.alert(
               // alert source: https://reactnative.dev/docs/alert
-              'Clear Search History',
-              'Are you sure you want to clear your search history? This can\'t be undone.',
+              "Clear Search History",
+              "Are you sure you want to clear your search history? This can't be undone.",
               [
                 {
-                  text: 'Cancel',
-                  style: 'cancel',
+                  text: "Cancel",
+                  style: "cancel",
                 },
                 {
-                  text: 'Delete',
-                  style: 'destructive',
+                  text: "Delete",
+                  style: "destructive",
                   onPress: () => {
                     // Put your delete history logic here
-                  },},]);}
-        }>
+                  },
+                },
+              ],
+            );
+          }}
+        >
           <Text style={styles.buttonText}>Delete</Text>
         </TouchableOpacity>
       </View>
 
       <View style={styles.buttonContainer}>
-        <Text style={styles.labelText}>Log Out</Text>
+        <Text style={[styles.labelText, { color: colors.text }]}>Log Out</Text>
         <TouchableOpacity
           style={styles.logOutbutton}
           onPress={() => {
             Alert.alert(
               // alert source: https://reactnative.dev/docs/alert
-              'Log Out',
-              'Are you sure you want to log out?',
+              "Log Out",
+              "Are you sure you want to log out?",
               [
                 {
-                  text: 'Cancel',
-                  style: 'cancel',
+                  text: "Cancel",
+                  style: "cancel",
                 },
                 {
-                  text: 'Log Out',
-                  style: 'destructive',
+                  text: "Log Out",
+                  style: "destructive",
                   onPress: () => {
                     // Added with Copilot: clear the signed-in state and return to the sign-in screen.
                     route.params.setIsSignedIn(false);
-                  },},]);}
-        }>
+                  },
+                },
+              ],
+            );
+          }}
+        >
           <Text style={styles.buttonText}>Log Out</Text>
         </TouchableOpacity>
       </View>
     </View>
   );
-  
 }
 
 const styles = StyleSheet.create({
@@ -110,7 +117,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     marginBottom: 20,
     marginTop: 20,
-  },  
+  },
 
   buttonContainer: {
     flexDirection: "row",
@@ -121,7 +128,7 @@ const styles = StyleSheet.create({
   },
 
   toggleLightModeButton: {
-    backgroundColor: "#d46c35", // Orange background color  
+    backgroundColor: "#d46c35", // Orange background color
     paddingVertical: 10,
     paddingHorizontal: 20,
     borderRadius: 20,
@@ -154,5 +161,5 @@ const styles = StyleSheet.create({
     width: "30%",
     borderRadius: 20,
     alignItems: "center", // Center the text inside the button
-  }
+  },
 });

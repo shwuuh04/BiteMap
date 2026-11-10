@@ -1,4 +1,5 @@
 import { addDoc, collection, getDocs, query, where } from "firebase/firestore";
+import { useTheme } from "@react-navigation/native";
 import { useState } from "react";
 import {
   Alert,
@@ -6,37 +7,41 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
-  View, 
+  View,
   Keyboard,
-  TouchableWithoutFeedback 
+  TouchableWithoutFeedback,
 } from "react-native";
 import { db } from "./firebaseConfig.js";
 
 export default function SearchScreen({ navigation }) {
-const [search, setSearch] = useState("");
+  const [search, setSearch] = useState("");
+  const { colors } = useTheme();
 
   return (
-      <View>
+    <View style={{ flex: 1, backgroundColor: colors.background }}>
+      <Text style={styles.header}>Find a Bite near you!</Text>
 
-        <Text style={styles.header}>Find a Bite near you!</Text>
+      <TextInput
+        placeholder="Search..."
+        style={[
+          styles.searchBar,
+          { backgroundColor: colors.card, color: colors.text },
+        ]}
+        placeholderTextColor={colors.text}
+        value={search}
+        onChangeText={setSearch}
+      />
 
-        <TextInput
-          placeholder="Search..."
-          style={styles.searchBar}
-          value={search}
-          onChangeText={setSearch}
-        />
-
-        <TouchableOpacity
-          style={styles.searchButton}
-          onPress={() => {navigation.navigate("Map", { searchQuery: search });}}
-        >
-          <Text style={{ color: "#fff", fontSize: 16 }}>Search</Text>
-        </TouchableOpacity> 
-
-      </View>
+      <TouchableOpacity
+        style={styles.searchButton}
+        onPress={() => {
+          navigation.navigate("Map", { searchQuery: search });
+        }}
+      >
+        <Text style={{ color: "#fff", fontSize: 16 }}>Search</Text>
+      </TouchableOpacity>
+    </View>
   );
-  
 }
 
 const styles = StyleSheet.create({
@@ -46,7 +51,7 @@ const styles = StyleSheet.create({
     padding: 30,
     alignItems: "center",
   },
- 
+
   searchBar: {
     alignSelf: "center",
     width: "80%",
@@ -70,17 +75,15 @@ const styles = StyleSheet.create({
     marginTop: 20,
     width: "30%",
     alignItems: "center", // Center the text inside the button
-    alignSelf : "center", // center the button itself
+    alignSelf: "center", // center the button itself
   },
 
   header: {
     fontSize: 24,
     fontWeight: "bold",
-    color: "#d46c35", 
+    color: "#d46c35",
     marginBottom: 20,
     marginTop: 60,
     textAlign: "center",
-  }
-
-
+  },
 });
