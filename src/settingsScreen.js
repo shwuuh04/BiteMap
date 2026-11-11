@@ -11,28 +11,35 @@ import {
   TouchableWithoutFeedback,
   Switch,
 } from "react-native";
+import { signOut } from "firebase/auth";
 // import { Switch } from "react-native-switch";
-import { db } from "./firebaseConfig.js";
+import { auth } from "./firebaseConfig.js";
 import { settingsStyles as styles } from "./styles.js";
 import { clearSearchHistory } from "./searchScreen.js";
 
+// Function for screen !!
 export default function SettingsScreen({ navigation, route }) {
+  // will be changed to grab the username by doing email - everything after @.  splice or whatever the method is.
   const username = "User";
 
   const { isDark, isSaving, changeTheme } = useAppTheme();
   const { colors } = useTheme();
 
+  // Actual view
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
+      {/* Display the username at the top */}
       <Text style={[styles.welcomeText, { color: colors.text }]}>
         Hello, {username}
       </Text>
 
       {/* switch source: https://reactnative.dev/docs/switch */}
+      {/* Light/Dark mode switch toggle */}
       <View style={styles.buttonContainer}>
         <Text style={[styles.labelText, { color: colors.text }]}>Dark Mode</Text>
 
-        {/* Switch with text source: https://stackoverflow.com/questions/40865391/how-to-show-text-yes-no-inside-a-switch-in-react-native */}
+        {/* Switch with text source: https://stackoverflow.com/questions/40865391/how-to-show-text-yes-no-inside-a-switch-in-react-native
+        UNUSED as of now but might be changed, i dunno. its not important right now */}
         <Switch
           trackColor={{ false: "#767577", true: "#f6d6a4" }}
           thumbColor={isDark ? "#d46c35" : "#f4f3f4"}
@@ -43,6 +50,9 @@ export default function SettingsScreen({ navigation, route }) {
         />
       </View>
 
+      {/* Clear search history button.
+      onPress, show an alert asking for confirmation
+      Then delete search history if user chooses delete. */}
       <View style={styles.buttonContainer}>
         <Text style={[styles.labelText, { color: colors.text }]}>Clear Search History</Text>
         <TouchableOpacity
@@ -79,6 +89,10 @@ export default function SettingsScreen({ navigation, route }) {
         </TouchableOpacity>
       </View>
 
+      {/* Log out button.
+      onPress, show an alert asking for confirmation
+      if user chooses logout, change the app's theme to light mode
+      then log the user out */}
       <View style={styles.buttonContainer}>
         <Text style={[styles.labelText, { color: colors.text }]}>Log Out</Text>
         <TouchableOpacity
@@ -97,8 +111,15 @@ export default function SettingsScreen({ navigation, route }) {
                   text: "Log Out",
                   style: "destructive",
                   onPress: async () => {
-                    if (await changeTheme(false)) {
+                    await changeTheme(false);
+                    try {
+                      await signOut(auth);
                       route.params.setIsSignedIn(false);
+                    } catch {
+                      Alert.alert(
+                        "Couldn't log out",
+                        "Please check your connection and try again."
+                      );
                     }
                   },
                 },
