@@ -35,10 +35,10 @@ function MainTabNavigator({ route }) {
         tabBarInactiveTintColor: COLORS.inactive,
       }}
     >
+
+      {/* 3 buttons at the bottom nav bar */}
       <Tab.Screen name="Search" component={SearchScreen} />
-
       <Tab.Screen name="Map" component={MapScreen} />
-
       {/* Added with Copilot: forwards the app-level auth setter to SettingsScreen. */}
       <Tab.Screen
         name="Settings"
