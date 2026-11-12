@@ -32,21 +32,20 @@ export async function getUserLocation() {
 
 // Function for screen !!
 export default function MapScreen({ navigation, route }) {
-  /* 
-  //retrieve location data from firebase 
-
-  {foodTrucks.map((truck) => (
-  <Marker
-    key={truck.id}
-    coordinate={{
-      latitude: truck.latitude,
-      longitude: truck.longitude
-    }}
-    title={truck.name}
-    description={truck.type}
-  />
-))}
-  */
+  
+  // get truck data from firestore: i have changed the format of the fields on firestore, pls refer to Firebase console before implementing here
+  // {foodTrucks.map((truck) => (
+  //   <Marker
+  //     key={truck.id}
+  //     coordinate={{
+  //       latitude: truck.latitude,
+  //       longitude: truck.longitude
+  //     }}
+  //     title={truck.name}
+  //     description={truck.type}
+  //   />
+  // ))}
+  
 
   // getting the searchterm that is passed from search screen. 
   const search = route?.params?.searchQuery || "";
