@@ -32,11 +32,13 @@ export async function getUserLocation() {
 
 // Function for screen !!
 export default function MapScreen({ navigation, route }) {
-  
-
-  // getting the searchterm that is passed from search screen. 
-  const search = route?.params?.searchQuery || "";
+  const searchQuery =
+    typeof route?.params?.searchQuery === "string"
+      ? route.params.searchQuery.trim()
+      : "";
   const [foodTrucks, setFoodTrucks] = useState([]);
+  const [foodTrucksStatus, setFoodTrucksStatus] = useState("loading");
+  const [isMapReady, setIsMapReady] = useState(false);
   // getting the user's location. src: https://draftbit.com/answers/get-the-users-location-in-expo/
   const [location, setLocation] = useState(null);
   const mapRef = useRef(null);
@@ -47,8 +49,6 @@ export default function MapScreen({ navigation, route }) {
   // getting truck data from Firestore
   useEffect(() => {
     let isMounted = true;
-    console.log("running load trucks")
-
     async function loadFoodTrucks() {
       try {
         const snapshot = await getDocs(collection(db, "foodTrucks"));
@@ -75,10 +75,15 @@ export default function MapScreen({ navigation, route }) {
           }];
         });
 
-        if (isMounted) setFoodTrucks(trucks);
+        if (isMounted) {
+          setFoodTrucks(trucks);
+          setFoodTrucksStatus("loaded");
+          setIsMapReady(false);
+        }
       } catch (error) {
         console.error("Failed to load food trucks from Firestore.", error);
         if (isMounted) {
+          setFoodTrucksStatus("failed");
           Alert.alert(
             "Food trucks unavailable",
             "Food truck locations couldn't be loaded."
@@ -92,6 +97,57 @@ export default function MapScreen({ navigation, route }) {
       isMounted = false;
     };
   }, []);
+
+
+  // logic for finding a matching truck to the search term and centering it.
+  useEffect(() => {
+    const rawSearchQuery = route?.params?.searchQuery;
+    if (typeof rawSearchQuery !== "string") return;
+
+    if (!searchQuery) {
+      navigation.setParams({ searchQuery: undefined });
+      return;
+    }
+
+    if (foodTrucksStatus === "loading") return;
+
+    if (foodTrucksStatus === "failed") {
+      navigation.setParams({ searchQuery: undefined });
+      return;
+    }
+
+    const normalizedQuery = searchQuery.toLowerCase();
+    const matches = foodTrucks.filter(
+      (truck) =>
+        truck.name.toLowerCase().includes(normalizedQuery) ||
+        truck.type.toLowerCase().includes(normalizedQuery)
+    );
+
+    if (matches.length === 1) {
+      if (!isMapReady) return;
+      const [match] = matches;
+      mapRef.current?.recenter(match.latitude, match.longitude);
+    } else if (matches.length === 0) {
+      Alert.alert(
+        "No matching food truck",
+        `No food truck matched "${searchQuery}".`
+      );
+    } else {
+      Alert.alert(
+        "Multiple food trucks found",
+        `More than one truck matched "${searchQuery}". Try a more specific search.`
+      );
+    }
+
+    navigation.setParams({ searchQuery: undefined });
+  }, [
+    foodTrucks,
+    foodTrucksStatus,
+    isMapReady,
+    navigation,
+    route?.params?.searchQuery,
+    searchQuery,
+  ]);
 
   // Function to recenter the map on the user's location, created by CoPilot. 
   function recenterMap() {
@@ -118,6 +174,7 @@ export default function MapScreen({ navigation, route }) {
         ref={mapRef}
         foodTrucks={foodTrucks} // passing the list of trucks
         userLocation={location?.coords ?? null} // passing the user's location. if user didn't allow perms (earlier in code) then it is null.
+        onMapLoadEnd={() => setIsMapReady(true)}
       />
       <TouchableOpacity
         style={styles.recenterButton}

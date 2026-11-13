@@ -118,6 +118,10 @@ export default function SearchScreen({ navigation }) {
         style={styles.searchButton}
         onPress={async () => {
           const searchTerm = search.trim();
+          if (!searchTerm) {
+            Alert.alert("Enter a search", "Type a food truck name or cuisine.");
+            return;
+          }
 
           try {
             const updatedHistory = await addSearchTerm(searchTerm);

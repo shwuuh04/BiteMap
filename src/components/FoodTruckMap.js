@@ -1,4 +1,9 @@
-import React, { forwardRef, useImperativeHandle, useRef } from "react";
+import React, {
+  forwardRef,
+  useImperativeHandle,
+  useMemo,
+  useRef,
+} from "react";
 import { WebView } from "react-native-webview";
 import {
   MAP_DOCUMENT_STYLES,
@@ -7,7 +12,7 @@ import {
 } from "../styles.js";
 
 const FoodTruckMap = forwardRef(function FoodTruckMap(
-  { foodTrucks = [], userLocation = null },
+  { foodTrucks = [], userLocation = null, onMapLoadEnd },
   ref
 ) {
   const webViewRef = useRef(null);
@@ -103,15 +108,17 @@ const FoodTruckMap = forwardRef(function FoodTruckMap(
       </body>
     </html>
   `;
+  const source = useMemo(() => ({ html: mapHTML }), [mapHTML]);
 
   return (
     <WebView
       ref={webViewRef}
       style={mapStyles.webView}
       originWhitelist={["*"]}
-      source={{ html: mapHTML }}
+      source={source}
       javaScriptEnabled={true}
       domStorageEnabled={true}
+      onLoadEnd={onMapLoadEnd}
     />
   );
 });
