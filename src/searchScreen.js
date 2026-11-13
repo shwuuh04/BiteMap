@@ -24,6 +24,16 @@ async function getSearchHistory() {
   return history;
 }
 
+async function deleteSearchHistory(index) {
+  const history = await getSearchHistory();
+  const updatedHistory = history.filter((_, historyIndex) => historyIndex !== index);
+  await AsyncStorage.setItem(
+    SEARCH_HISTORY_KEY,
+    JSON.stringify(updatedHistory)
+  );
+  return updatedHistory;
+}
+
 // Function to add a search term to the history 
 // first, trim any blank spaces from the term
 // then get the list from the getSearchHistory() function
@@ -53,7 +63,10 @@ export async function clearSearchHistory() {
 export default function SearchScreen({ navigation }) {
   const [search, setSearch] = useState("");
   const [searchHistory, setSearchHistory] = useState([]);
-  const { colors } = useTheme();
+  const { colors, dark } = useTheme();
+  const historyTextStyle = dark
+    ? styles.historyTextDark
+    : styles.historyTextLight;
 
   // When this screen is in focus, get the latest search history and update it
   // this is necessary to ensure the history is displayed properly on the screen
@@ -80,7 +93,7 @@ export default function SearchScreen({ navigation }) {
 
   // Actual view
   return (
-    <View style={[styles.screen, { backgroundColor: colors.background }]}>
+    <View style={[styles.screen, dark ? styles.screenDark : styles.screenLight]}>
 
       <Text style={styles.header}>Find a Bite near you!</Text>
 
@@ -89,7 +102,7 @@ export default function SearchScreen({ navigation }) {
         placeholder="Search..."
         style={[
           styles.searchBar,
-          { backgroundColor: colors.card, color: colors.text },
+          dark ? styles.searchBarDark : styles.searchBarLight,
         ]}
         placeholderTextColor={colors.text}
         value={search}
@@ -115,6 +128,7 @@ export default function SearchScreen({ navigation }) {
             );
           }
 
+          setSearch("");
           navigation.navigate("Map", { searchQuery: searchTerm });
         }}
       >
@@ -126,11 +140,27 @@ export default function SearchScreen({ navigation }) {
         data={searchHistory}
         keyExtractor={(item, index) => `${index}-${item}`}
         ListEmptyComponent={
-          <Text style={{ color: colors.text }}>No history to show.</Text>
+          <Text style={historyTextStyle}>No history to show.</Text>
         }
-        renderItem={({ item }) => (
-          <View>
-            <Text style={{ color: colors.text }}>{item}</Text>
+        renderItem={({ item, index }) => (
+          <View style={styles.historyBox}>
+            <Text style={historyTextStyle}>{item}</Text>
+            <Text>Icon</Text>
+            <TouchableOpacity
+              onPress={async () => {
+                try {
+                  const updatedHistory = await deleteSearchHistory(index);
+                  setSearchHistory(updatedHistory);
+                } catch {
+                  Alert.alert(
+                    "Couldn't delete search",
+                    "Please try again."
+                  );
+                }
+              }}
+            >
+              <Text>Delete</Text>
+            </TouchableOpacity>
           </View>
         )}
       />

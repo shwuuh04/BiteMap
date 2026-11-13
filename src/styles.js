@@ -1,3 +1,4 @@
+
 import { StyleSheet } from "react-native";
 
 export const COLORS = {
@@ -108,6 +109,12 @@ export const searchStyles = StyleSheet.create({
   screen: {
     flex: 1,
   },
+  screenLight: {
+    backgroundColor: COLORS.background,
+  },
+  screenDark: {
+    backgroundColor: COLORS.darkBackground,
+  },
   header: {
     fontSize: 24,
     fontWeight: "bold",
@@ -128,6 +135,14 @@ export const searchStyles = StyleSheet.create({
     marginTop: 20,
     fontSize: 16,
   },
+  searchBarLight: {
+    backgroundColor: COLORS.lightCard,
+    color: COLORS.lightText,
+  },
+  searchBarDark: {
+    backgroundColor: COLORS.darkCard,
+    color: COLORS.darkText,
+  },
   searchButton: {
     backgroundColor: COLORS.accent,
     paddingVertical: 10,
@@ -141,6 +156,17 @@ export const searchStyles = StyleSheet.create({
   searchButtonText: {
     color: "#fff",
     fontSize: 16,
+  },
+  historyTextLight: {
+    color: COLORS.lightText,
+  },
+  historyTextDark: {
+    color: COLORS.darkText,
+  },
+  historyBox: {
+    backgroundColor: "#ffffff",
+    borderRadius: 5,
+    padding: 20,
   },
 });
 
