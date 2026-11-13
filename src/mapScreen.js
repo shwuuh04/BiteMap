@@ -1,4 +1,4 @@
-import { addDoc, collection, getDocs, query, where } from "firebase/firestore";
+import { collection, getDocs } from "firebase/firestore";
 import { useState, useEffect, useRef } from "react";
 import {
   Alert,
@@ -33,27 +33,64 @@ export async function getUserLocation() {
 // Function for screen !!
 export default function MapScreen({ navigation, route }) {
   
-  // get truck data from firestore: i have changed the format of the fields on firestore, pls refer to Firebase console before implementing here
-  // {foodTrucks.map((truck) => (
-  //   <Marker
-  //     key={truck.id}
-  //     coordinate={{
-  //       latitude: truck.latitude,
-  //       longitude: truck.longitude
-  //     }}
-  //     title={truck.name}
-  //     description={truck.type}
-  //   />
-  // ))}
-  
 
   // getting the searchterm that is passed from search screen. 
   const search = route?.params?.searchQuery || "";
+  const [foodTrucks, setFoodTrucks] = useState([]);
   // getting the user's location. src: https://draftbit.com/answers/get-the-users-location-in-expo/
   const [location, setLocation] = useState(null);
   const mapRef = useRef(null);
   useEffect(() => {
     getUserLocation().then(setLocation);
+  }, []);
+
+  // getting updated truck data
+  useEffect(() => {
+    let isMounted = true;
+    console.log("running load trucks")
+
+    async function loadFoodTrucks() {
+      try {
+        const snapshot = await getDocs(collection(db, "foodTrucks"));
+        const trucks = snapshot.docs.flatMap((truckDoc) => {
+          const data = truckDoc.data();
+          const mapLocation = data.mapLocation;
+          const validTruck =
+            typeof data.name === "string" &&
+            typeof data.cuisineType === "string" &&
+            Number.isFinite(mapLocation?.latitude) &&
+            Number.isFinite(mapLocation?.longitude);
+
+          if (!validTruck) {
+            console.warn(`Skipping food truck with invalid data: ${truckDoc.id}`);
+            return [];
+          }
+
+          return [{
+            id: truckDoc.id,
+            name: data.name,
+            type: data.cuisineType,
+            latitude: mapLocation.latitude,
+            longitude: mapLocation.longitude,
+          }];
+        });
+
+        if (isMounted) setFoodTrucks(trucks);
+      } catch (error) {
+        console.error("Failed to load food trucks from Firestore.", error);
+        if (isMounted) {
+          Alert.alert(
+            "Food trucks unavailable",
+            "Food truck locations couldn't be loaded."
+          );
+        }
+      }
+    }
+
+    loadFoodTrucks();
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
   // Function to recenter the map on the user's location, created by CoPilot. 
@@ -72,30 +109,6 @@ export default function MapScreen({ navigation, route }) {
     );
   }
 
-  // Temporary food truck data in an array. Will be moved to Firestore soon.
-  const foodTrucks = [
-    {
-      id: "1",
-      name: "Taco Truck",
-      type: "Mexican",
-      latitude: 49.2827,
-      longitude: -123.1207,
-    },
-    {
-      id: "2",
-      name: "Burger Truck",
-      type: "Burgers",
-      latitude: 49.285,
-      longitude: -123.115,
-    },
-    {
-      id: "3",
-      name: "Dessert Truck",
-      type: "Desserts",
-      latitude: 49.279,
-      longitude: -123.125,
-    },
-  ];
 
   // Actual view
   return (
