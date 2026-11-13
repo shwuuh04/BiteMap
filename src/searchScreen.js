@@ -109,9 +109,10 @@ export default function SearchScreen({ navigation }) {
         onChangeText={setSearch}
       />
 
-      {/* Search button. Pressing does 3 things:
+      {/* Search button. Pressing does these things:
       - Adds the search term to the search history via addSearchTerm(searchTerm)
       - Updates the search history array using setSearchHistory(updatedHistory)
+      - Clears the search bar's current text
       - Navigates to the Map page and passes the search term to be used to display the result*/}
       <TouchableOpacity
         style={styles.searchButton}

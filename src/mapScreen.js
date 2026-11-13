@@ -44,7 +44,7 @@ export default function MapScreen({ navigation, route }) {
     getUserLocation().then(setLocation);
   }, []);
 
-  // getting updated truck data
+  // getting truck data from Firestore
   useEffect(() => {
     let isMounted = true;
     console.log("running load trucks")
