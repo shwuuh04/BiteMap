@@ -115,7 +115,7 @@ function AppContent() {
               component={ScanFoodTruckScreen}
               options={{
                 headerShown: true,
-                title: "Update Pin",
+                title: "Scan to Update Pin",
                 headerBackTitle: "Back",
               }}
             />
@@ -124,7 +124,7 @@ function AppContent() {
               component={ConfirmUpdateScreen}
               options={{
                 headerShown: true,
-                title: "Confirm Food Truck",
+                title: "Confirm to Update Pin",
                 headerBackTitle: "Scan",
               }}
             />

@@ -36,7 +36,7 @@ export default function ScanFoodTruckScreen({ navigation }) {
       const result = await getDocs(
         query(
           collection(db, "foodTrucks"),
-          where("truckID", "==", normalizedTruckId)
+          where("truckID", "==", normalizedTruckId),
         )
       );
 
@@ -45,8 +45,18 @@ export default function ScanFoodTruckScreen({ navigation }) {
         return;
       }
 
+      const truckName = result.docs[0].data().name;
+      if (typeof truckName !== "string" || !truckName.trim()) {
+        Alert.alert(
+          "Truck name unavailable",
+          "The matching food truck has no valid name.",
+        );
+        return;
+      }
+
       navigation.navigate("ConfirmFoodTruck", {
         truckId: normalizedTruckId,
+        truckName: truckName.trim(),
       });
     } catch (error) {
       console.error("Truck ID verification failed:", error);
@@ -72,7 +82,6 @@ export default function ScanFoodTruckScreen({ navigation }) {
               barcodeScannerSettings={{ barcodeTypes: ['qr'] }}
               onBarcodeScanned={({ data }) => {
                 setTruckId(data);
-                
               }}
             />
           ) : (

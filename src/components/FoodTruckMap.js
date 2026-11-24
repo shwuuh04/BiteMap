@@ -1,4 +1,5 @@
 import React, { forwardRef, useImperativeHandle, useMemo, useRef } from "react";
+import { Linking } from "react-native";
 import { WebView } from "react-native-webview";
 import {
   MAP_DOCUMENT_STYLES,
@@ -17,6 +18,17 @@ const FoodTruckMap = forwardRef(function FoodTruckMap(
     /</g,
     "\\u003c",
   );
+
+  // opening leaflet's credit URLs in browser instead of in-app. in-app has no back-button to return to our mapview, which would softlock the user. i did not want to remove the credits altogether, so this is the next best option.
+  // src: comments from https://stackoverflow.com/questions/3543187/prepending-http-to-a-url-that-doesnt-already-contain-http for the https check and https://reactnative.dev/docs/linking?language=javascript for the main function
+  function handleShouldStartLoadWithRequest({ url }) {
+    if (!/^https?:\/\//i.test(url)) return true;
+
+    Linking.openURL(url).catch((error) => {
+      console.error("Failed to open external link:", error);
+    });
+    return false;
+  }
 
   // Copilot helped expose map controls to MapScreen for recentering and fitting search results.
   useImperativeHandle(ref, () => ({
@@ -152,6 +164,7 @@ marker.bindPopup(popupContent);
       source={source}
       javaScriptEnabled={true}
       domStorageEnabled={true}
+      onShouldStartLoadWithRequest={handleShouldStartLoadWithRequest}
       onLoadStart={onMapLoadStart}
       onLoadEnd={onMapLoadEnd}
     />
