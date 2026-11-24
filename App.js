@@ -2,6 +2,9 @@
 // npx expo install @maplibre/maplibre-react-native
 // npx expo install expo-location
 // npx expo install @react-native-async-storage/async-storage
+// npx expo install expo-file-system
+// npx expo install expo-image-picker
+// npx expo install @react-native-picker/picker
 
 import {
   NavigationContainer,

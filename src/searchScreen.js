@@ -1,7 +1,7 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useFocusEffect, useTheme } from "@react-navigation/native";
 import { useCallback, useState } from "react";
-import { Alert, FlatList, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { Alert, FlatList, Image, Text, TextInput, TouchableOpacity, View } from "react-native";
 import { searchStyles as styles } from "./styles.js";
 
 const SEARCH_HISTORY_KEY = "bitemap.searchHistory";
@@ -149,23 +149,37 @@ export default function SearchScreen({ navigation }) {
         }
         renderItem={({ item, index }) => (
           <View style={styles.historyBox}>
-            <Text style={historyTextStyle}>{item}</Text>
-            <Text>Icon</Text>
-            <TouchableOpacity
-              onPress={async () => {
-                try {
-                  const updatedHistory = await deleteSearchHistory(index);
-                  setSearchHistory(updatedHistory);
-                } catch {
-                  Alert.alert(
-                    "Couldn't delete search",
-                    "Please try again."
-                  );
-                }
-              }}
-            >
-              <Text>Delete</Text>
-            </TouchableOpacity>
+            <View style={styles.historyItemRow}>
+              <TouchableOpacity
+                style={styles.historySearchButton}
+                onPress={() => navigation.navigate("Map", { searchQuery: item })}
+              >
+                <Image
+                  source={require("../assets/historyIcon.png")}
+                  style={styles.historyIcon}
+                />
+                <Text style={historyTextStyle}>{item}</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.deleteButton}
+                onPress={async () => {
+                  try {
+                    const updatedHistory = await deleteSearchHistory(index);
+                    setSearchHistory(updatedHistory);
+                  } catch {
+                    Alert.alert(
+                      "Couldn't delete search",
+                      "Please try again."
+                    );
+                  }
+                }}
+              >
+                <Image
+                  source={require("../assets/deleteIcon.png")}
+                  style={styles.deleteIcon}
+                />
+              </TouchableOpacity>
+            </View>
           </View>
         )}
       />

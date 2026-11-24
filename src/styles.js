@@ -147,7 +147,7 @@ export const searchStyles = StyleSheet.create({
     paddingVertical: 10,
     paddingHorizontal: 20,
     borderRadius: 20,
-    marginTop: 20,
+    marginVertical: 20,
     width: "30%",
     alignItems: "center",
     alignSelf: "center",
@@ -166,6 +166,27 @@ export const searchStyles = StyleSheet.create({
     backgroundColor: "#ffffff",
     borderRadius: 5,
     padding: 20,
+  },
+  historyItemRow: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  historyIcon: {
+    width: 30,
+    height: 30,
+    marginRight: 8,
+  },
+  historySearchButton: {
+    flex: 1,
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  deleteIcon: {
+    width: 30,
+    height: 30,
+  },
+  deleteButton: {
+    marginLeft: "auto",
   },
 });
 
