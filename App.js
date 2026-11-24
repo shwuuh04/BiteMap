@@ -12,7 +12,8 @@ import {
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
-import { useState } from "react";
+import { Asset } from "expo-asset";
+import { useEffect, useState } from "react";
 import { StatusBar } from "expo-status-bar";
 import { ThemeProvider, useAppTheme } from "./src/themeMode.js";
 
@@ -25,6 +26,11 @@ import { COLORS } from "./src/styles.js";
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
+// preloading icons for the search page
+const SEARCH_ICONS = [
+  require("./assets/historyIcon.png"),
+  require("./assets/deleteIcon.png"),
+];
 
 // MainTabNavigator created with the use of ChatGPT. This handles the bottom tab navigation and passes the isSignedIn state to the SettingsScreen. This allows the user to sign out if they wish.
 function MainTabNavigator({ route }) {
@@ -62,6 +68,12 @@ export default function App() {
 function AppContent() {
   const [isSignedIn, setIsSignedIn] = useState(false);
   const { isDark, isLoaded } = useAppTheme();
+
+  useEffect(() => {
+    Asset.loadAsync(SEARCH_ICONS).catch((error) => {
+      console.error("Failed to preload search icons:", error);
+    });
+  }, []);
 
   // Wait for the saved preference before showing the app.
   if (!isLoaded) return null;

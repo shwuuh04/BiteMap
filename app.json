@@ -22,8 +22,16 @@
       "favicon": "./assets/favicon.png"
     },
     "plugins": [
-    ["@maplibre/maplibre-react-native"],
-    ["expo-location", {"locationWhenInUsePermission": "Allow $(PRODUCT_NAME) to use your location to show relevant content near you."}]
+      [
+        "@maplibre/maplibre-react-native"
+      ],
+      [
+        "expo-location",
+        {
+          "locationWhenInUsePermission": "Allow $(PRODUCT_NAME) to use your location to show relevant content near you."
+        }
+      ],
+      "expo-asset"
     ]
   }
 }

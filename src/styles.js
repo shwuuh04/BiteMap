@@ -65,6 +65,7 @@ export const signInStyles = StyleSheet.create({
     paddingHorizontal: 15,
     marginTop: 20,
     fontSize: 16,
+    color: "#808080",
   },
   signInButton: {
     backgroundColor: COLORS.accent,

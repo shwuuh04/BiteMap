@@ -56,6 +56,16 @@ async function handleSubmit() {
             route.params.setIsSignedIn(true);
         }
         catch (error) {
+            if (error.code === "auth/email-already-in-use") {
+                setActiveTab("signin");
+                setPassword("");
+                Alert.alert(
+                    "Account already exists",
+                    "Please sign in with this email."
+                );
+                return;
+            }
+
             console.log(error.message);
             alert("Invalid email. Try again.");
         };
@@ -94,6 +104,7 @@ async function handleSubmit() {
           {/* email input bar */}
           <TextInput
             placeholder="Email"
+            placeholderTextColor="#808080"
             style={styles.textInputBar}
             value={email}
             onChangeText={setEmail}
@@ -103,6 +114,7 @@ async function handleSubmit() {
           {/* password input bar */}
           <TextInput
             placeholder="Password"
+            placeholderTextColor="#808080"
             style={styles.textInputBar}
             value={password}
             onChangeText={setPassword}
