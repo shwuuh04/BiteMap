@@ -18,6 +18,9 @@ export default function ConfirmUpdateScreen({ route }) {
       <Text style={styles.label}>Truck ID: {truckId}</Text>
 
       {/* map and pin of new location, not interactable */}
+      <View style={styles.newLocationContainer}>
+        <Text style={styles.newLocationText}>New Location Here</Text>
+      </View>
 
       {/* confirm button, return to map */}
       <TouchableOpacity

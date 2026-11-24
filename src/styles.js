@@ -346,6 +346,20 @@ export const ScanFoodTruckStyles = StyleSheet.create({
     color: "#fff",
     textAlign: "center",
   },
+  newLocationContainer: {
+    width: "100%",
+    height: 180,
+    alignItems: "center",
+    justifyContent: "center",
+    marginVertical: 20,
+    backgroundColor: "#D3D3D3",
+    borderRadius: 8,
+  },
+  newLocationText: {
+    color: "#555",
+    fontSize: 16,
+    textAlign: "center",
+  },
   input: {
     borderWidth: 1,
     borderColor: "#801616",
