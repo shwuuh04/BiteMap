@@ -313,6 +313,21 @@ export const addFoodTruckStyles = StyleSheet.create({
     fontSize: 16,
     marginBottom: 10,
   },
+  subLabel: {
+    color: "#666",
+    fontSize: 13,
+    lineHeight: 18,
+    marginTop: -4,
+    marginBottom: 20,
+  },
+  input: {
+    borderWidth: 1,
+    borderColor: "#801616",
+    borderRadius: 8,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    backgroundColor: "#fff",
+  },
 
   button: {
     backgroundColor: "#801616",
@@ -325,12 +340,5 @@ export const addFoodTruckStyles = StyleSheet.create({
   buttonText: {
     color: "white",
     fontWeight: "bold",
-  },
-
-  preview: {
-    width: "100%",
-    height: 250,
-    resizeMode: "contain",
-    marginTop: 20,
   },
 });
