@@ -131,20 +131,18 @@ export default function MapScreen({ navigation, route }) {
         truck.type.toLowerCase().includes(normalizedQuery),
     );
 
-    if (matches.length === 1) {
-      if (!isMapReady) return;
-      const [match] = matches;
-      mapRef.current?.recenter(match.latitude, match.longitude);
-    } else if (matches.length === 0) {
+    if (matches.length > 0 && !isMapReady) return;
+
+    if (matches.length === 0) {
       Alert.alert(
         "No matching food truck",
         `No food truck matched "${searchQuery}".`,
       );
+    } else if (matches.length === 1) {
+      const [match] = matches;
+      mapRef.current?.recenter(match.latitude, match.longitude);
     } else {
-      Alert.alert(
-        "Multiple food trucks found",
-        `More than one truck matched "${searchQuery}". Try a more specific search.`,
-      );
+      mapRef.current?.fitLocations(matches);
     }
 
     navigation.setParams({ searchQuery: undefined });
@@ -181,6 +179,7 @@ export default function MapScreen({ navigation, route }) {
         ref={mapRef}
         foodTrucks={foodTrucks} // passing the list of trucks
         userLocation={location?.coords ?? null} // passing the user's location. if user didn't allow perms (earlier in code) then it is null.
+        onMapLoadStart={() => setIsMapReady(false)}
         onMapLoadEnd={() => setIsMapReady(true)}
       />
       <TouchableOpacity style={styles.recenterButton} onPress={recenterMap}>
@@ -188,10 +187,13 @@ export default function MapScreen({ navigation, route }) {
       </TouchableOpacity>
       {/* food truck add button */}
       <TouchableOpacity
-        style={styles.addButton}
+        style={styles.scanButton}
         onPress={() => navigation.navigate("AddFoodTruck")}
       >
-        <Text>Add Food Truck</Text>
+        <Image
+          source={require("../assets/scanIcon.png")}
+          style={styles.scanIcon}
+        />
       </TouchableOpacity>
     </View>
   );

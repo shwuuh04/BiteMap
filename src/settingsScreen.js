@@ -18,7 +18,7 @@ import { settingsStyles as styles } from "./styles.js";
 import { clearSearchHistory } from "./searchScreen.js";
 
 // Function for screen !!
-export default function SettingsScreen({ navigation, route }) {
+export default function SettingsScreen() {
   // will be changed to grab the username by doing email - everything after @.  splice or whatever the method is.
   const username = "User";
 
@@ -114,7 +114,6 @@ export default function SettingsScreen({ navigation, route }) {
                     await changeTheme(false);
                     try {
                       await signOut(auth);
-                      route.params.setIsSignedIn(false);
                     } catch {
                       Alert.alert(
                         "Couldn't log out",

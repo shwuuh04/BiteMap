@@ -224,10 +224,10 @@ export const mapStyles = StyleSheet.create({
     flex: 1,
   },
 
-  addButton: {
+  scanButton: {
     position: "absolute",
     right: 20,
-    top: 0,
+    top: 20,
     width: 56,
     height: 56,
     borderRadius: 28,
@@ -240,6 +240,10 @@ export const mapStyles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.25,
     shadowRadius: 4,
+  },
+  scanIcon: {
+    width: 40,
+    height: 40,
   },
 });
 

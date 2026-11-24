@@ -11,6 +11,7 @@ import {
 } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { onAuthStateChanged } from "firebase/auth";
 
 import { Asset } from "expo-asset";
 import { useEffect, useState } from "react";
@@ -23,6 +24,7 @@ import SettingsScreen from "./src/settingsScreen.js";
 import SignInScreen from "./src/signInScreen.js";
 import AddFoodTruckScreen from "./src/AddFoodTruckScreen.js";
 import { COLORS } from "./src/styles.js";
+import { auth } from "./src/firebaseConfig.js";
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -30,10 +32,11 @@ const Stack = createNativeStackNavigator();
 const SEARCH_ICONS = [
   require("./assets/historyIcon.png"),
   require("./assets/deleteIcon.png"),
+  require("./assets/scanIcon.png"),
 ];
 
-// MainTabNavigator created with the use of ChatGPT. This handles the bottom tab navigation and passes the isSignedIn state to the SettingsScreen. This allows the user to sign out if they wish.
-function MainTabNavigator({ route }) {
+// ChatGPT helped create MainTabNavigator; Firebase auth state now controls access to the signed-in tabs.
+function MainTabNavigator() {
   return (
     <Tab.Navigator
       screenOptions={{
@@ -46,12 +49,10 @@ function MainTabNavigator({ route }) {
       {/* 3 buttons at the bottom nav bar */}
       <Tab.Screen name="Search" component={SearchScreen} />
       <Tab.Screen name="Map" component={MapScreen} />
-      {/* Added with Copilot: forwards the app-level auth setter to SettingsScreen. */}
       <Tab.Screen
         name="Settings"
         component={SettingsScreen}
-        initialParams={{ setIsSignedIn: route.params.setIsSignedIn }}
-      ></Tab.Screen>
+      />
     </Tab.Navigator>
   );
 }
@@ -66,7 +67,7 @@ export default function App() {
 }
 
 function AppContent() {
-  const [isSignedIn, setIsSignedIn] = useState(false);
+  const [isSignedIn, setIsSignedIn] = useState(null);
   const { isDark, isLoaded } = useAppTheme();
 
   useEffect(() => {
@@ -75,8 +76,15 @@ function AppContent() {
     });
   }, []);
 
+  useEffect(() => {
+    // Copilot helped replace the non-serializable setIsSignedIn navigation param with this auth-state listener.
+    return onAuthStateChanged(auth, (user) => {
+      setIsSignedIn(Boolean(user));
+    });
+  }, []);
+
   // Wait for the saved preference before showing the app.
-  if (!isLoaded) return null;
+  if (!isLoaded || isSignedIn === null) return null;
 
   const baseTheme = isDark ? DarkTheme : DefaultTheme;
 
@@ -97,9 +105,8 @@ function AppContent() {
       <Stack.Navigator screenOptions={{ headerShown: false }}>
         {isSignedIn ? (
           <>
-            <Stack.Screen // Signed In: render all the screens in MainTabNavigator (SearchScreen, MapScreen, and SettingsScreen)
+            <Stack.Screen
               name="SignedIn"
-              initialParams={{ setIsSignedIn }}
               component={MainTabNavigator}
             />
             <Stack.Screen
@@ -113,12 +120,7 @@ function AppContent() {
             />
           </>
         ) : (
-          // Signed Out: unloads all tabs and only renders SignInScreen
-          <Stack.Screen
-            name="SignedOut"
-            initialParams={{ setIsSignedIn }}
-            component={SignInScreen}
-          />
+          <Stack.Screen name="SignedOut" component={SignInScreen} />
         )}
       </Stack.Navigator>
     </NavigationContainer>

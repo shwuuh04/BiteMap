@@ -14,7 +14,7 @@ import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "fire
 import { signInStyles as styles } from "./styles.js";
 
 // Function for screen!!
-export default function SignInScreen({ navigation, route }) {
+export default function SignInScreen() {
 const [activeTab, setActiveTab] = useState('signin');
 const [email, setEmail] = useState("");
 const [password, setPassword] = useState("");
@@ -31,11 +31,10 @@ async function handleSubmit() {
 
     // if user is on SignIn page,
     // sign in to Firebase Auth with the user's email and password
-    // and set isSignedIn boolean to true, which switches the user to the searchscreen (main app navigation)
+    // and switches to main app after account creation
     if (activeTab === 'signin') {
         try {
             const response = await signInWithEmailAndPassword(auth, email, password);
-            route.params.setIsSignedIn(true);
         }
         catch (error) {
             console.log(error.message);
@@ -45,7 +44,7 @@ async function handleSubmit() {
     } 
     // ELSE occurs if the user is on SignUp page,
     // create a new account via Firebase Auth with the inputted email and password
-    // then change the boolean isSignedIn to true again, which switches the user to the searchscreen (main app navigation)
+    // and switches to main app after account creation
     else {
         try {
             const response = await createUserWithEmailAndPassword(
@@ -53,7 +52,6 @@ async function handleSubmit() {
                 email,
                 password,
             );
-            route.params.setIsSignedIn(true);
         }
         catch (error) {
             if (error.code === "auth/email-already-in-use") {
@@ -121,7 +119,7 @@ async function handleSubmit() {
             secureTextEntry={true}
           />
 
-          {/* Updated with Copilot: use the route-provided setter to mark the user as signed in. */}
+          {/* Submit credentials; Firebase auth state controls app access. */}
           <TouchableOpacity
             style={styles.signInButton}
             onPress={() => {handleSubmit(); console.log("submitted");}}

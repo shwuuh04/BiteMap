@@ -7,7 +7,7 @@ import {
 } from "../styles.js";
 
 const FoodTruckMap = forwardRef(function FoodTruckMap(
-  { foodTrucks = [], userLocation = null, onMapLoadEnd },
+  { foodTrucks = [], userLocation = null, onMapLoadStart, onMapLoadEnd },
   ref,
 ) {
   const webViewRef = useRef(null);
@@ -18,19 +18,33 @@ const FoodTruckMap = forwardRef(function FoodTruckMap(
     "\\u003c",
   );
 
-  // Created by CoPilot. This code makes the recenter function visible to the mapScreen.js so it can call the function when the recenter button is pressed.
+  // Copilot helped expose map controls to MapScreen for recentering and fitting search results.
   useImperativeHandle(ref, () => ({
     recenter(latitude, longitude) {
       webViewRef.current?.injectJavaScript(`
-        if (typeof map !== "undefined") {
-          map.setView([${latitude}, ${longitude}], 13);
+        if (window.foodTruckMap) {
+          window.foodTruckMap.setView([${latitude}, ${longitude}], 13);
+        }
+        true;
+      `);
+    },
+    fitLocations(locations) {
+      const coordinates = JSON.stringify(
+        locations.map(({ latitude, longitude }) => [latitude, longitude]),
+      );
+      webViewRef.current?.injectJavaScript(`
+        if (window.foodTruckMap) {
+          window.foodTruckMap.fitBounds(${coordinates}, {
+            padding: [40, 40],
+            maxZoom: 13,
+          });
         }
         true;
       `);
     },
   }));
 
-  // via chatgpt sets default view to vancouver
+  // ChatGPT helped set Vancouver as the default view when no user location is available.
   const mapHTML = `
     <!DOCTYPE html>
     <html>
@@ -59,6 +73,7 @@ const FoodTruckMap = forwardRef(function FoodTruckMap(
             ? [userLocation.latitude, userLocation.longitude]
             : [49.2827, -123.1207];
           const map = L.map("map").setView(initialCenter, 13);
+          window.foodTruckMap = map;
 
           // Add OpenStreetMap tiles
           L.tileLayer(
@@ -123,17 +138,6 @@ popupContent += "</div>";
 marker.bindPopup(popupContent);
 
           });
-          function escapeHTML(value) {
-  return String(value).replace(/[&<>"']/g, (character) => ({
-    "&": "&amp;",
-    "<": "&lt;",
-    ">": "&gt;",
-    '"': "&quot;",
-    "'": "&#039;",
-  })[character]);
-}
-  escapeHTML(truck.name)
-escapeHTML(truck.type)
         </script>
       </body>
     </html>
@@ -148,6 +152,7 @@ escapeHTML(truck.type)
       source={source}
       javaScriptEnabled={true}
       domStorageEnabled={true}
+      onLoadStart={onMapLoadStart}
       onLoadEnd={onMapLoadEnd}
     />
   );
