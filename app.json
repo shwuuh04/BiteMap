@@ -31,6 +31,12 @@
           "locationWhenInUsePermission": "Allow $(PRODUCT_NAME) to use your location to show relevant content near you."
         }
       ],
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Allow $(PRODUCT_NAME) to use your camera to scan food truck QR codes."
+        }
+      ],
       "expo-asset"
     ]
   }

@@ -22,9 +22,10 @@ import SearchScreen from "./src/searchScreen.js";
 import MapScreen from "./src/mapScreen.js";
 import SettingsScreen from "./src/settingsScreen.js";
 import SignInScreen from "./src/signInScreen.js";
-import AddFoodTruckScreen from "./src/AddFoodTruckScreen.js";
+import ScanFoodTruckScreen from "./src/ScanFoodTruckScreen.js";
 import { COLORS } from "./src/styles.js";
 import { auth } from "./src/firebaseConfig.js";
+import ConfirmUpdateScreen from "./src/confirmUpdateScreen.js";
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -110,12 +111,21 @@ function AppContent() {
               component={MainTabNavigator}
             />
             <Stack.Screen
-              name="AddFoodTruck"
-              component={AddFoodTruckScreen}
+              name="ScanFoodTruck"
+              component={ScanFoodTruckScreen}
               options={{
                 headerShown: true,
-                title: "Add Food Truck",
+                title: "Update Pin",
                 headerBackTitle: "Back",
+              }}
+            />
+            <Stack.Screen
+              name="ConfirmFoodTruck"
+              component={ConfirmUpdateScreen}
+              options={{
+                headerShown: true,
+                title: "Confirm Food Truck",
+                headerBackTitle: "Scan",
               }}
             />
           </>

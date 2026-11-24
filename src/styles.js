@@ -301,7 +301,7 @@ export const MAP_DOCUMENT_STYLES = `
   }
 `;
 
-export const addFoodTruckStyles = StyleSheet.create({
+export const ScanFoodTruckStyles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 25,
@@ -324,6 +324,27 @@ export const addFoodTruckStyles = StyleSheet.create({
     lineHeight: 18,
     marginTop: -4,
     marginBottom: 20,
+  },
+  cameraContainer: {
+    height: 360,
+    width: "100%",
+    marginBottom: 24,
+    overflow: "hidden",
+    borderRadius: 8,
+    backgroundColor: "#000",
+  },
+  cameraPreview: {
+    flex: 1,
+  },
+  cameraPermission: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    padding: 16,
+  },
+  cameraMessage: {
+    color: "#fff",
+    textAlign: "center",
   },
   input: {
     borderWidth: 1,

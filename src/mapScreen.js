@@ -188,7 +188,7 @@ export default function MapScreen({ navigation, route }) {
       {/* food truck add button */}
       <TouchableOpacity
         style={styles.scanButton}
-        onPress={() => navigation.navigate("AddFoodTruck")}
+        onPress={() => navigation.navigate("ScanFoodTruck")}
       >
         <Image
           source={require("../assets/scanIcon.png")}
