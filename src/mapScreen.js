@@ -8,6 +8,7 @@ import {
   View,
   Keyboard,
   TouchableWithoutFeedback,
+  Image,
 } from "react-native";
 import * as Location from "expo-location";
 import { db } from "./firebaseConfig.js";
@@ -62,17 +63,25 @@ export default function MapScreen({ navigation, route }) {
             Number.isFinite(mapLocation?.longitude);
 
           if (!validTruck) {
-            console.warn(`Skipping food truck with invalid data: ${truckDoc.id}`);
+            console.warn(
+              `Skipping food truck with invalid data: ${truckDoc.id}`,
+            );
             return [];
           }
 
-          return [{
-            id: truckDoc.id,
-            name: data.name,
-            type: data.cuisineType,
-            latitude: mapLocation.latitude,
-            longitude: mapLocation.longitude,
-          }];
+          return [
+            {
+              id: truckDoc.id,
+              name: data.name,
+              type: data.cuisineType,
+              latitude: mapLocation.latitude,
+              longitude: mapLocation.longitude,
+
+              // Images saved in Firestore
+              truckPhoto: data.truckPhoto,
+              menuPhoto: data.menuPhoto,
+            },
+          ];
         });
 
         if (isMounted) {
@@ -86,7 +95,7 @@ export default function MapScreen({ navigation, route }) {
           setFoodTrucksStatus("failed");
           Alert.alert(
             "Food trucks unavailable",
-            "Food truck locations couldn't be loaded."
+            "Food truck locations couldn't be loaded.",
           );
         }
       }
@@ -97,7 +106,6 @@ export default function MapScreen({ navigation, route }) {
       isMounted = false;
     };
   }, []);
-
 
   // logic for finding a matching truck to the search term and centering it.
   useEffect(() => {
@@ -120,7 +128,7 @@ export default function MapScreen({ navigation, route }) {
     const matches = foodTrucks.filter(
       (truck) =>
         truck.name.toLowerCase().includes(normalizedQuery) ||
-        truck.type.toLowerCase().includes(normalizedQuery)
+        truck.type.toLowerCase().includes(normalizedQuery),
     );
 
     if (matches.length === 1) {
@@ -130,12 +138,12 @@ export default function MapScreen({ navigation, route }) {
     } else if (matches.length === 0) {
       Alert.alert(
         "No matching food truck",
-        `No food truck matched "${searchQuery}".`
+        `No food truck matched "${searchQuery}".`,
       );
     } else {
       Alert.alert(
         "Multiple food trucks found",
-        `More than one truck matched "${searchQuery}". Try a more specific search.`
+        `More than one truck matched "${searchQuery}". Try a more specific search.`,
       );
     }
 
@@ -149,22 +157,21 @@ export default function MapScreen({ navigation, route }) {
     searchQuery,
   ]);
 
-  // Function to recenter the map on the user's location, created by CoPilot. 
+  // Function to recenter the map on the user's location, created by CoPilot.
   function recenterMap() {
     if (!location?.coords) {
       Alert.alert(
         "Location unavailable",
-        "Allow location access to recenter the map."
+        "Allow location access to recenter the map.",
       );
       return;
     }
 
     mapRef.current?.recenter(
       location.coords.latitude,
-      location.coords.longitude
+      location.coords.longitude,
     );
   }
-
 
   // Actual view
   return (
@@ -176,13 +183,16 @@ export default function MapScreen({ navigation, route }) {
         userLocation={location?.coords ?? null} // passing the user's location. if user didn't allow perms (earlier in code) then it is null.
         onMapLoadEnd={() => setIsMapReady(true)}
       />
-      <TouchableOpacity
-        style={styles.recenterButton}
-        onPress={recenterMap}
-      >
+      <TouchableOpacity style={styles.recenterButton} onPress={recenterMap}>
         <View style={styles.recenterCircle} />
       </TouchableOpacity>
-
+      {/* food truck add button */}
+      <TouchableOpacity
+        style={styles.addButton}
+        onPress={() => navigation.navigate("AddFoodTruck")}
+      >
+        <Text>Add Food Truck</Text>
+      </TouchableOpacity>
     </View>
   );
 }

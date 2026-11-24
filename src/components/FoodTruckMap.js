@@ -1,9 +1,4 @@
-import React, {
-  forwardRef,
-  useImperativeHandle,
-  useMemo,
-  useRef,
-} from "react";
+import React, { forwardRef, useImperativeHandle, useMemo, useRef } from "react";
 import { WebView } from "react-native-webview";
 import {
   MAP_DOCUMENT_STYLES,
@@ -13,12 +8,15 @@ import {
 
 const FoodTruckMap = forwardRef(function FoodTruckMap(
   { foodTrucks = [], userLocation = null, onMapLoadEnd },
-  ref
+  ref,
 ) {
   const webViewRef = useRef(null);
   // Convert the data into JSON for Leaflet
   const trucksJSON = JSON.stringify(foodTrucks).replace(/</g, "\\u003c");
-  const userLocationJSON = JSON.stringify(userLocation).replace(/</g, "\\u003c");
+  const userLocationJSON = JSON.stringify(userLocation).replace(
+    /</g,
+    "\\u003c",
+  );
 
   // Created by CoPilot. This code makes the recenter function visible to the mapScreen.js so it can call the function when the recenter button is pressed.
   useImperativeHandle(ref, () => ({
@@ -98,12 +96,44 @@ const FoodTruckMap = forwardRef(function FoodTruckMap(
               truck.longitude
             ]).addTo(map);
 
-            marker.bindPopup(
-              "<b>" + truck.name + "</b><br>" +
-              truck.type
-            );
+            let popupContent =
+  "<div style='width:200px;'>" +
+  "<h3>" + truck.name + "</h3>" +
+  "<p>" + truck.type + "</p>";
+
+// Display food truck photo
+if (truck.truckPhoto) {
+  popupContent +=
+    "<img src='data:image/jpeg;base64," +
+    truck.truckPhoto +
+    "' style='width:100%; height:120px; object-fit:cover; border-radius:8px;'>";
+}
+
+// Display menu photo
+if (truck.menuPhoto) {
+  popupContent +=
+    "<p><b>Menu</b></p>" +
+    "<img src='data:image/jpeg;base64," +
+    truck.menuPhoto +
+    "' style='width:100%; border-radius:8px;'>";
+}
+
+popupContent += "</div>";
+
+marker.bindPopup(popupContent);
 
           });
+          function escapeHTML(value) {
+  return String(value).replace(/[&<>"']/g, (character) => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#039;",
+  })[character]);
+}
+  escapeHTML(truck.name)
+escapeHTML(truck.type)
         </script>
       </body>
     </html>

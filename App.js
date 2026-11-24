@@ -19,6 +19,7 @@ import SearchScreen from "./src/searchScreen.js";
 import MapScreen from "./src/mapScreen.js";
 import SettingsScreen from "./src/settingsScreen.js";
 import SignInScreen from "./src/signInScreen.js";
+import AddFoodTruckScreen from "./src/AddFoodTruckScreen.js";
 import { COLORS } from "./src/styles.js";
 
 const Tab = createBottomTabNavigator();
@@ -35,7 +36,6 @@ function MainTabNavigator({ route }) {
         tabBarInactiveTintColor: COLORS.inactive,
       }}
     >
-
       {/* 3 buttons at the bottom nav bar */}
       <Tab.Screen name="Search" component={SearchScreen} />
       <Tab.Screen name="Map" component={MapScreen} />
@@ -83,12 +83,21 @@ function AppContent() {
       <StatusBar style={isDark ? "light" : "dark"} />
       <Stack.Navigator screenOptions={{ headerShown: false }}>
         {isSignedIn ? (
-          // Signed In: render all the screens in MainTabNavigator (SearchScreen, MapScreen, and SettingsScreen)
-          <Stack.Screen
-            name="SignedIn"
-            initialParams={{ setIsSignedIn }}
-            component={MainTabNavigator}
-          />
+          <>
+            <Stack.Screen // Signed In: render all the screens in MainTabNavigator (SearchScreen, MapScreen, and SettingsScreen)
+              name="SignedIn"
+              initialParams={{ setIsSignedIn }}
+              component={MainTabNavigator}
+            />
+            <Stack.Screen
+              name="AddFoodTruck"
+              component={AddFoodTruckScreen}
+              options={{
+                headerShown: true,
+                title: "Add Food Truck",
+              }}
+            />
+          </>
         ) : (
           // Signed Out: unloads all tabs and only renders SignInScreen
           <Stack.Screen

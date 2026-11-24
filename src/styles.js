@@ -1,4 +1,3 @@
-
 import { StyleSheet } from "react-native";
 
 export const COLORS = {
@@ -202,6 +201,24 @@ export const mapStyles = StyleSheet.create({
   webView: {
     flex: 1,
   },
+
+  addButton: {
+    position: "absolute",
+    right: 20,
+    top: 0,
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "#fff",
+    zIndex: 10,
+    elevation: 4,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+  },
 });
 
 export const settingsStyles = StyleSheet.create({
@@ -257,3 +274,42 @@ export const MAP_DOCUMENT_STYLES = `
     padding: 0;
   }
 `;
+
+export const addFoodTruckStyles = StyleSheet.create({
+  container: {
+    flex: 1,
+    padding: 25,
+    backgroundColor: "#F5F5F5",
+  },
+
+  title: {
+    fontSize: 24,
+    fontWeight: "bold",
+    marginBottom: 25,
+  },
+
+  label: {
+    fontSize: 16,
+    marginBottom: 10,
+  },
+
+  button: {
+    backgroundColor: "#801616",
+    padding: 15,
+    borderRadius: 8,
+    marginTop: 15,
+    alignItems: "center",
+  },
+
+  buttonText: {
+    color: "white",
+    fontWeight: "bold",
+  },
+
+  preview: {
+    width: "100%",
+    height: 250,
+    resizeMode: "contain",
+    marginTop: 20,
+  },
+});
