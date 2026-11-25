@@ -102,7 +102,7 @@ const FoodTruckMap = forwardRef(function FoodTruckMap(
     recenter(latitude, longitude) {
       webViewRef.current?.injectJavaScript(`
         if (window.foodTruckMap) {
-          window.foodTruckMap.setView([${latitude}, ${longitude}], 13);
+          window.foodTruckMap.setView([${latitude}, ${longitude}], 14);
         }
         true;
       `);
@@ -138,7 +138,7 @@ const FoodTruckMap = forwardRef(function FoodTruckMap(
           if (userLocation) {
             initialCenter = [userLocation.latitude, userLocation.longitude];
           }
-          const map = L.map("map").setView(initialCenter, 13);
+          const map = L.map("map").setView(initialCenter, 14);
           window.foodTruckMap = map;
           window.foodTruckMarkers = {};
 
@@ -225,11 +225,11 @@ const FoodTruckMap = forwardRef(function FoodTruckMap(
 
           window.setSearchResults = (searchResults) => {
             if (searchResults.length === 1) {
-              map.setView(searchResults[0], 13);
+              map.setView(searchResults[0], 14);
             } else if (searchResults.length > 1) {
               map.fitBounds(searchResults, {
                 padding: [40, 40],
-                maxZoom: 13,
+                maxZoom: 14,
               });
             }
           };
