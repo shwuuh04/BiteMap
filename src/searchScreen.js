@@ -68,6 +68,12 @@ export default function SearchScreen({ navigation }) {
   const historyTextStyle = dark
     ? styles.historyTextDark
     : styles.historyTextLight;
+  const historyIconStyle = dark
+    ? styles.historyIconDark
+    : styles.historyIcon;
+  const deleteIconStyle = dark
+    ? styles.deleteIconDark
+    : styles.deleteIcon;
 
   // When this screen is in focus, get the latest search history and update it
   // this is necessary to ensure the history is displayed properly on the screen
@@ -145,6 +151,7 @@ export default function SearchScreen({ navigation }) {
           }
 
           setSearch("");
+          console.log(dark);
           openMapSearch(searchTerm);
         }}
       >
@@ -159,7 +166,12 @@ export default function SearchScreen({ navigation }) {
           <Text style={historyTextStyle}>No history to show.</Text>
         }
         renderItem={({ item, index }) => (
-          <View style={styles.historyBox}>
+          <View
+            style={[
+              styles.historyBox,
+              dark && styles.historyBoxDark,
+            ]}
+          >
             <View style={styles.historyItemRow}>
               <TouchableOpacity
                 style={styles.historySearchButton}
@@ -167,7 +179,7 @@ export default function SearchScreen({ navigation }) {
               >
                 <Image
                   source={require("../assets/historyIcon.png")}
-                  style={styles.historyIcon}
+                  style={historyIconStyle}
                 />
                 <Text style={historyTextStyle}>{item}</Text>
               </TouchableOpacity>
@@ -187,7 +199,7 @@ export default function SearchScreen({ navigation }) {
               >
                 <Image
                   source={require("../assets/deleteIcon.png")}
-                  style={styles.deleteIcon}
+                  style={deleteIconStyle}
                 />
               </TouchableOpacity>
             </View>

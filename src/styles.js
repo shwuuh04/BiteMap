@@ -164,9 +164,14 @@ export const searchStyles = StyleSheet.create({
     color: COLORS.darkText,
   },
   historyBox: {
-    backgroundColor: "#ffffff",
+    backgroundColor: COLORS.lightCard,
     borderRadius: 5,
     padding: 20,
+  },
+  historyBoxDark: {
+    backgroundColor: COLORS.darkCard,
+    borderColor: COLORS.darkBorder,
+    borderWidth: 1,
   },
   historyItemRow: {
     flexDirection: "row",
@@ -177,15 +182,27 @@ export const searchStyles = StyleSheet.create({
     height: 30,
     marginRight: 8,
   },
+  deleteIcon: {
+    width: 30,
+    height: 30,
+  },
+  historyIconDark: {
+    width: 30,
+    height: 30,
+    marginRight: 8,
+    tintColor: "#FFFFFF",
+  },
+  deleteIconDark: {
+    width: 30,
+    height: 30,
+    tintColor: "#FFFFFF",
+  },
   historySearchButton: {
     flex: 1,
     flexDirection: "row",
     alignItems: "center",
   },
-  deleteIcon: {
-    width: 30,
-    height: 30,
-  },
+  
   deleteButton: {
     marginLeft: "auto",
   },
