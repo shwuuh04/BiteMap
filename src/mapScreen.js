@@ -150,6 +150,11 @@ export default function MapScreen({ navigation, route }) {
     );
   }
 
+  // Function to recenter the map when a truck pin is tapped
+  function recenterOnTruck(truck) {
+    mapRef.current?.recenter(truck.latitude, truck.longitude);
+  }
+
   // Actual view
   return (
     <View style={styles.container}>
@@ -160,6 +165,7 @@ export default function MapScreen({ navigation, route }) {
         userLocation={location?.coords ?? null} // passing the user's location. if user didn't allow perms (earlier in code) then it is null.
         searchResults={searchResults}
         searchVersion={searchVersion}
+        onTruckTap={recenterOnTruck}
       />
       <TouchableOpacity style={styles.recenterButton} onPress={recenterMap}>
         <View style={styles.recenterCircle} />

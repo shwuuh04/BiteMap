@@ -19,6 +19,7 @@ const FoodTruckMap = forwardRef(function FoodTruckMap(
     userLocation = null,
     searchResults = [],
     searchVersion = 0,
+    onTruckTap,
   },
   ref,
 ) {
@@ -63,6 +64,20 @@ const FoodTruckMap = forwardRef(function FoodTruckMap(
   function injectMapData() {
     injectFoodTrucks();
     injectSearchResults();
+  }
+
+  function handleMessage(e) {
+    let message;
+    try {
+      message = JSON.parse(e.nativeEvent.data);
+    } catch (error) {
+      console.error("Could not read a message from the map.", error);
+      return;
+    }
+
+    if (message?.type === "truckTap") {
+      onTruckTap?.(message.truck);
+    }
   }
 
   useEffect(() => {
@@ -170,6 +185,18 @@ const FoodTruckMap = forwardRef(function FoodTruckMap(
               } else {
                 marker = L.marker(position).addTo(map);
                 window.foodTruckMarkers[truckId] = marker;
+                marker.on("click", () => {
+                  const location = marker.getLatLng();
+                  window.ReactNativeWebView.postMessage(
+                    JSON.stringify({
+                      type: "truckTap",
+                      truck: {
+                        latitude: location.lat,
+                        longitude: location.lng,
+                      },
+                    })
+                  );
+                });
               }
 
               let popupContent =
@@ -222,6 +249,7 @@ const FoodTruckMap = forwardRef(function FoodTruckMap(
       source={source}
       javaScriptEnabled={true}
       domStorageEnabled={true}
+      onMessage={handleMessage}
       onShouldStartLoadWithRequest={handleShouldStartLoadWithRequest}
       onLoadEnd={() => {
         mapIsReady.current = true;
