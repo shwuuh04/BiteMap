@@ -63,6 +63,7 @@ export async function clearSearchHistory() {
 export default function SearchScreen({ navigation }) {
   const [search, setSearch] = useState("");
   const [searchHistory, setSearchHistory] = useState([]);
+  const [searchVersion, setSearchVersion] = useState(0);
   const { colors, dark } = useTheme();
   const historyTextStyle = dark
     ? styles.historyTextDark
@@ -90,6 +91,16 @@ export default function SearchScreen({ navigation }) {
       };
     }, [])
   );
+
+  function openMapSearch(searchTerm) {
+    // Change the version so searching for the same term again refreshes the map.
+    const nextVersion = searchVersion + 1;
+    setSearchVersion(nextVersion);
+    navigation.navigate("Map", {
+      searchQuery: searchTerm,
+      searchVersion: nextVersion,
+    });
+  }
 
   // Actual view
   return (
@@ -134,7 +145,7 @@ export default function SearchScreen({ navigation }) {
           }
 
           setSearch("");
-          navigation.navigate("Map", { searchQuery: searchTerm });
+          openMapSearch(searchTerm);
         }}
       >
         <Text style={styles.searchButtonText}>Search</Text>
@@ -152,7 +163,7 @@ export default function SearchScreen({ navigation }) {
             <View style={styles.historyItemRow}>
               <TouchableOpacity
                 style={styles.historySearchButton}
-                onPress={() => navigation.navigate("Map", { searchQuery: item })}
+                onPress={() => openMapSearch(item)}
               >
                 <Image
                   source={require("../assets/historyIcon.png")}

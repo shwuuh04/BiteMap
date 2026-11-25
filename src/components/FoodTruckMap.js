@@ -8,13 +8,22 @@ import {
 } from "../styles.js";
 
 const FoodTruckMap = forwardRef(function FoodTruckMap(
-  { foodTrucks = [], userLocation = null, onMapLoadStart, onMapLoadEnd },
+  {
+    foodTrucks = [],
+    userLocation = null,
+    searchResults = [],
+    searchVersion = 0,
+  },
   ref,
 ) {
   const webViewRef = useRef(null);
   // Convert the data into JSON for Leaflet
   const trucksJSON = JSON.stringify(foodTrucks).replace(/</g, "\\u003c");
   const userLocationJSON = JSON.stringify(userLocation).replace(
+    /</g,
+    "\\u003c",
+  );
+  const searchResultsJSON = JSON.stringify(searchResults).replace(
     /</g,
     "\\u003c",
   );
@@ -30,26 +39,12 @@ const FoodTruckMap = forwardRef(function FoodTruckMap(
     return false;
   }
 
-  // Copilot helped expose map controls to MapScreen for recentering and fitting search results.
+  // Copilot helped add search results to the map's starting view and recenter control.
   useImperativeHandle(ref, () => ({
     recenter(latitude, longitude) {
       webViewRef.current?.injectJavaScript(`
         if (window.foodTruckMap) {
           window.foodTruckMap.setView([${latitude}, ${longitude}], 13);
-        }
-        true;
-      `);
-    },
-    fitLocations(locations) {
-      const coordinates = JSON.stringify(
-        locations.map(({ latitude, longitude }) => [latitude, longitude]),
-      );
-      webViewRef.current?.injectJavaScript(`
-        if (window.foodTruckMap) {
-          window.foodTruckMap.fitBounds(${coordinates}, {
-            padding: [40, 40],
-            maxZoom: 13,
-          });
         }
         true;
       `);
@@ -81,9 +76,14 @@ const FoodTruckMap = forwardRef(function FoodTruckMap(
         <script>
           // Create the map at user's location. if location not given then default to vancouver
           const userLocation = ${userLocationJSON};
-          const initialCenter = userLocation
-            ? [userLocation.latitude, userLocation.longitude]
-            : [49.2827, -123.1207];
+          const searchResults = ${searchResultsJSON};
+          let initialCenter = [49.2827, -123.1207];
+          if (userLocation) {
+            initialCenter = [userLocation.latitude, userLocation.longitude];
+          }
+          if (searchResults.length === 1) {
+            initialCenter = searchResults[0];
+          }
           const map = L.map("map").setView(initialCenter, 13);
           window.foodTruckMap = map;
 
@@ -150,6 +150,14 @@ popupContent += "</div>";
 marker.bindPopup(popupContent);
 
           });
+
+          if (searchResults.length > 1) {
+            map.fitBounds(searchResults, {
+              padding: [40, 40],
+              maxZoom: 13,
+            });
+          }
+
         </script>
       </body>
     </html>
@@ -158,6 +166,7 @@ marker.bindPopup(popupContent);
 
   return (
     <WebView
+      key={searchVersion}
       ref={webViewRef}
       style={mapStyles.webView}
       originWhitelist={["*"]}
@@ -165,8 +174,6 @@ marker.bindPopup(popupContent);
       javaScriptEnabled={true}
       domStorageEnabled={true}
       onShouldStartLoadWithRequest={handleShouldStartLoadWithRequest}
-      onLoadStart={onMapLoadStart}
-      onLoadEnd={onMapLoadEnd}
     />
   );
 });

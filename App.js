@@ -78,7 +78,7 @@ function AppContent() {
   }, []);
 
   useEffect(() => {
-    // Copilot helped replace the non-serializable setIsSignedIn navigation param with this auth-state listener.
+    // Copilot: replacing the setIsSignedIn navigation boolean with this auth-state listener, which should work for persistence (we cant test since we're using expo go, its a fresh sign-in each time anyway).
     return onAuthStateChanged(auth, (user) => {
       setIsSignedIn(Boolean(user));
     });
