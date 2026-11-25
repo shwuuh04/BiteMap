@@ -5,6 +5,7 @@ import { collection, getDocs, query, where } from "firebase/firestore";
 import { db } from "./firebaseConfig.js";
 import { ScanFoodTruckStyles as styles } from "./styles.js";
 import { CameraView, useCameraPermissions } from "expo-camera";
+import * as Location from "expo-location";
 
 export default function ScanFoodTruckScreen({ navigation }) {
   const [truckId, setTruckId] = useState("");
@@ -45,7 +46,10 @@ export default function ScanFoodTruckScreen({ navigation }) {
         return;
       }
 
-      const truckName = result.docs[0].data().name;
+      const truckData = result.docs[0].data();
+      const truck = { ...truckData, id: result.docs[0].id };
+      const truckName = truckData.name;
+      const oldLocation = truckData.mapLocation;
       if (typeof truckName !== "string" || !truckName.trim()) {
         Alert.alert(
           "Truck name unavailable",
@@ -53,10 +57,52 @@ export default function ScanFoodTruckScreen({ navigation }) {
         );
         return;
       }
+      if (
+        !Number.isFinite(oldLocation?.latitude) ||
+        !Number.isFinite(oldLocation?.longitude)
+      ) {
+        Alert.alert(
+          "Location unavailable",
+          "The matching food truck has no valid saved location.",
+        );
+        return;
+      }
+
+      const { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== "granted") {
+        Alert.alert(
+          "Location unavailable",
+          "Allow location access to verify this food truck's location.",
+        );
+        return;
+      }
+
+      let position;
+      try {
+        position = await Location.getCurrentPositionAsync({
+          accuracy: Location.Accuracy.Balanced,
+        });
+      } catch (error) {
+        console.warn("Current location unavailable; trying last known location.", error);
+        position = await Location.getLastKnownPositionAsync();
+      }
+
+      if (!position?.coords) {
+        Alert.alert(
+          "Location unavailable",
+          "Your current location couldn't be determined. Please try again.",
+        );
+        return;
+      }
+
+      const newLocation = {
+        latitude: position.coords.latitude,
+        longitude: position.coords.longitude,
+      };
 
       navigation.navigate("ConfirmFoodTruck", {
-        truckId: normalizedTruckId,
-        truckName: truckName.trim(),
+        truck,
+        newLocation: newLocation,
       });
     } catch (error) {
       console.error("Truck ID verification failed:", error);

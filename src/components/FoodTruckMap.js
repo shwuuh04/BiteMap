@@ -1,4 +1,10 @@
-import React, { forwardRef, useImperativeHandle, useMemo, useRef } from "react";
+import React, {
+  forwardRef,
+  useEffect,
+  useImperativeHandle,
+  useMemo,
+  useRef,
+} from "react";
 import { Linking } from "react-native";
 import { WebView } from "react-native-webview";
 import {
@@ -17,16 +23,53 @@ const FoodTruckMap = forwardRef(function FoodTruckMap(
   ref,
 ) {
   const webViewRef = useRef(null);
-  // Convert the data into JSON for Leaflet
-  const trucksJSON = JSON.stringify(foodTrucks).replace(/</g, "\\u003c");
   const userLocationJSON = JSON.stringify(userLocation).replace(
     /</g,
     "\\u003c",
   );
-  const searchResultsJSON = JSON.stringify(searchResults).replace(
-    /</g,
-    "\\u003c",
-  );
+  const latestFoodTrucks = useRef(foodTrucks);
+  const latestSearchResults = useRef(searchResults);
+  const mapIsReady = useRef(false);
+  latestFoodTrucks.current = foodTrucks;
+  latestSearchResults.current = searchResults;
+
+  function injectFoodTrucks() {
+    const trucksJSON = JSON.stringify(latestFoodTrucks.current).replace(
+      /</g,
+      "\\u003c",
+    );
+
+    webViewRef.current?.injectJavaScript(`
+      if (window.setFoodTrucks) {
+        window.setFoodTrucks(${trucksJSON});
+      }
+      true;
+    `);
+  }
+
+  function injectSearchResults() {
+    const searchResultsJSON = JSON.stringify(
+      latestSearchResults.current,
+    ).replace(/</g, "\\u003c");
+
+    webViewRef.current?.injectJavaScript(`
+      if (window.setSearchResults) {
+        window.setSearchResults(${searchResultsJSON});
+      }
+      true;
+    `);
+  }
+
+  function injectMapData() {
+    injectFoodTrucks();
+    injectSearchResults();
+  }
+
+  useEffect(() => {
+    if (mapIsReady.current) {
+      injectFoodTrucks();
+    }
+  }, [foodTrucks]);
 
   // opening leaflet's credit URLs in browser instead of in-app. in-app has no back-button to return to our mapview, which would softlock the user. i did not want to remove the credits altogether, so this is the next best option.
   // src: comments from https://stackoverflow.com/questions/3543187/prepending-http-to-a-url-that-doesnt-already-contain-http for the https check and https://reactnative.dev/docs/linking?language=javascript for the main function
@@ -76,16 +119,13 @@ const FoodTruckMap = forwardRef(function FoodTruckMap(
         <script>
           // Create the map at user's location. if location not given then default to vancouver
           const userLocation = ${userLocationJSON};
-          const searchResults = ${searchResultsJSON};
           let initialCenter = [49.2827, -123.1207];
           if (userLocation) {
             initialCenter = [userLocation.latitude, userLocation.longitude];
           }
-          if (searchResults.length === 1) {
-            initialCenter = searchResults[0];
-          }
           const map = L.map("map").setView(initialCenter, 13);
           window.foodTruckMap = map;
+          window.foodTruckMarkers = {};
 
           // Add OpenStreetMap tiles
           L.tileLayer(
@@ -96,10 +136,6 @@ const FoodTruckMap = forwardRef(function FoodTruckMap(
                 '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a>'
             }
           ).addTo(map);
-
-          // Food truck information from React Native
-          const foodTrucks = ${trucksJSON};
-
 
           // place a marker at the user's location
           if (userLocation) {
@@ -115,48 +151,61 @@ const FoodTruckMap = forwardRef(function FoodTruckMap(
             ).addTo(map);
           }
 
-          // Add a marker for each food truck
-          foodTrucks.forEach((truck) => {
-
-            const marker = L.marker([
-              truck.latitude,
-              truck.longitude
-            ]).addTo(map);
-
-            let popupContent =
-  "<div style='width:200px;'>" +
-  "<h3>" + truck.name + "</h3>" +
-  "<p>" + truck.type + "</p>";
-
-// Display food truck photo
-if (truck.truckPhoto) {
-  popupContent +=
-    "<img src='data:image/jpeg;base64," +
-    truck.truckPhoto +
-    "' style='width:100%; height:120px; object-fit:cover; border-radius:8px;'>";
-}
-
-// Display menu photo
-if (truck.menuPhoto) {
-  popupContent +=
-    "<p><b>Menu</b></p>" +
-    "<img src='data:image/jpeg;base64," +
-    truck.menuPhoto +
-    "' style='width:100%; border-radius:8px;'>";
-}
-
-popupContent += "</div>";
-
-marker.bindPopup(popupContent);
-
-          });
-
-          if (searchResults.length > 1) {
-            map.fitBounds(searchResults, {
-              padding: [40, 40],
-              maxZoom: 13,
+          window.setFoodTrucks = (foodTrucks) => {
+            const truckIds = foodTrucks.map((truck) => String(truck.id));
+            Object.keys(window.foodTruckMarkers).forEach((truckId) => {
+              if (!truckIds.includes(truckId)) {
+                map.removeLayer(window.foodTruckMarkers[truckId]);
+                delete window.foodTruckMarkers[truckId];
+              }
             });
-          }
+
+            foodTrucks.forEach((truck) => {
+              const truckId = String(truck.id);
+              const position = [truck.latitude, truck.longitude];
+              let marker = window.foodTruckMarkers[truckId];
+
+              if (marker) {
+                marker.setLatLng(position);
+              } else {
+                marker = L.marker(position).addTo(map);
+                window.foodTruckMarkers[truckId] = marker;
+              }
+
+              let popupContent =
+                "<div style='width:200px;'>" +
+                "<h3>" + truck.name + "</h3>" +
+                "<p>" + truck.type + "</p>";
+
+              if (truck.truckPhoto) {
+                popupContent +=
+                  "<img src='data:image/jpeg;base64," +
+                  truck.truckPhoto +
+                  "' style='width:100%; height:120px; object-fit:cover; border-radius:8px;'>";
+              }
+
+              if (truck.menuPhoto) {
+                popupContent +=
+                  "<p><b>Menu</b></p>" +
+                  "<img src='data:image/jpeg;base64," +
+                  truck.menuPhoto +
+                  "' style='width:100%; border-radius:8px;'>";
+              }
+
+              marker.bindPopup(popupContent + "</div>");
+            });
+          };
+
+          window.setSearchResults = (searchResults) => {
+            if (searchResults.length === 1) {
+              map.setView(searchResults[0], 13);
+            } else if (searchResults.length > 1) {
+              map.fitBounds(searchResults, {
+                padding: [40, 40],
+                maxZoom: 13,
+              });
+            }
+          };
 
         </script>
       </body>
@@ -174,6 +223,10 @@ marker.bindPopup(popupContent);
       javaScriptEnabled={true}
       domStorageEnabled={true}
       onShouldStartLoadWithRequest={handleShouldStartLoadWithRequest}
+      onLoadEnd={() => {
+        mapIsReady.current = true;
+        injectMapData();
+      }}
     />
   );
 });

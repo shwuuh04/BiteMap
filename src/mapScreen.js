@@ -1,4 +1,4 @@
-import { collection, getDocs } from "firebase/firestore";
+import { collection, onSnapshot } from "firebase/firestore";
 import { useState, useEffect, useRef } from "react";
 import {
   Alert,
@@ -62,10 +62,12 @@ export default function MapScreen({ navigation, route }) {
 
   // getting truck data from Firestore
   useEffect(() => {
-    let isMounted = true;
-    async function loadFoodTrucks() {
-      try {
-        const snapshot = await getDocs(collection(db, "foodTrucks"));
+    // subscribing to Firestore onSnapshot:
+    // this listens for ANY changes made to firestore. this way, when a user updates the truck location, it will be updated in real-time for all active users
+    // scr: https://firebase.google.com/docs/firestore/query-data/listen
+    const unsubscribe = onSnapshot(
+      collection(db, "foodTrucks"),
+      (snapshot) => {
         const trucks = snapshot.docs.flatMap((truckDoc) => {
           const data = truckDoc.data();
           const mapLocation = data.mapLocation;
@@ -97,26 +99,20 @@ export default function MapScreen({ navigation, route }) {
           ];
         });
 
-        if (isMounted) {
-          setFoodTrucks(trucks);
-          setFoodTrucksStatus("loaded");
-        }
-      } catch (error) {
-        console.error("Failed to load food trucks from Firestore.", error);
-        if (isMounted) {
-          setFoodTrucksStatus("failed");
-          Alert.alert(
-            "Food trucks unavailable",
-            "Food truck locations couldn't be loaded.",
-          );
-        }
-      }
-    }
+        setFoodTrucks(trucks);
+        setFoodTrucksStatus("loaded");
+      },
+      (error) => {
+        console.error("Failed to listen for food truck updates.", error);
+        setFoodTrucksStatus("failed");
+        Alert.alert(
+          "Food trucks unavailable",
+          "Food truck locations couldn't be loaded.",
+        );
+      },
+    );
 
-    loadFoodTrucks();
-    return () => {
-      isMounted = false;
-    };
+    return unsubscribe;
   }, []);
 
   // Show a message when the search does not match a truck.
