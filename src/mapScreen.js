@@ -14,6 +14,7 @@ import * as Location from "expo-location";
 import { db } from "./firebaseConfig.js";
 //import { Map, Camera, Marker } from "@maplibre/maplibre-react-native";
 import FoodTruckMap from "./components/FoodTruckMap.js";
+import BottomSheet from "./BottomSheet.js";
 import { mapStyles as styles } from "./styles.js";
 
 // Code from https://draftbit.com/answers/get-the-users-location-in-expo/ with changes made cuz idk what Promise.Race is
@@ -40,6 +41,7 @@ export default function MapScreen({ navigation, route }) {
   const searchVersion = route?.params?.searchVersion ?? 0;
   const [foodTrucks, setFoodTrucks] = useState([]);
   const [foodTrucksStatus, setFoodTrucksStatus] = useState("loading");
+  const [selectedTruck, setSelectedTruck] = useState(null);
   // getting the user's location. src: https://draftbit.com/answers/get-the-users-location-in-expo/
   const [location, setLocation] = useState(null);
   const mapRef = useRef(null);
@@ -127,12 +129,7 @@ export default function MapScreen({ navigation, route }) {
         `No food truck matched "${searchQuery}".`,
       );
     }
-  }, [
-    foodTrucksStatus,
-    searchQuery,
-    searchResults.length,
-    searchVersion,
-  ]);
+  }, [foodTrucksStatus, searchQuery, searchResults.length, searchVersion]);
 
   // Function to recenter the map on the user's location, created by CoPilot.
   function recenterMap() {
@@ -150,8 +147,10 @@ export default function MapScreen({ navigation, route }) {
     );
   }
 
-  // Function to recenter the map when a truck pin is tapped
+  // Function to select a truck and recenter the map
   function recenterOnTruck(truck) {
+    setSelectedTruck(truck);
+
     mapRef.current?.recenter(truck.latitude, truck.longitude);
   }
 
@@ -166,6 +165,12 @@ export default function MapScreen({ navigation, route }) {
         searchResults={searchResults}
         searchVersion={searchVersion}
         onTruckTap={recenterOnTruck}
+      />
+      <BottomSheet
+        foodTrucks={foodTrucks}
+        selectedTruck={selectedTruck}
+        onSelectTruck={recenterOnTruck}
+        onClearSelection={() => setSelectedTruck(null)}
       />
       <TouchableOpacity style={styles.recenterButton} onPress={recenterMap}>
         <View style={styles.recenterCircle} />

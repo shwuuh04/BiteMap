@@ -68,6 +68,7 @@ const FoodTruckMap = forwardRef(function FoodTruckMap(
 
   function handleMessage(e) {
     let message;
+
     try {
       message = JSON.parse(e.nativeEvent.data);
     } catch (error) {
@@ -76,7 +77,17 @@ const FoodTruckMap = forwardRef(function FoodTruckMap(
     }
 
     if (message?.type === "truckTap") {
-      onTruckTap?.(message.truck);
+      // Find the complete food truck using its ID
+      const truck = latestFoodTrucks.current.find(
+        (item) => String(item.id) === String(message.truckId),
+      );
+
+      // Send the selected truck to MapScreen
+      if (truck) {
+        onTruckTap?.(truck);
+      } else {
+        console.log("Could not find food truck:", message.truckId);
+      }
     }
   }
 
@@ -185,18 +196,18 @@ const FoodTruckMap = forwardRef(function FoodTruckMap(
               } else {
                 marker = L.marker(position).addTo(map);
                 window.foodTruckMarkers[truckId] = marker;
-                marker.on("click", () => {
-                  const location = marker.getLatLng();
-                  window.ReactNativeWebView.postMessage(
-                    JSON.stringify({
-                      type: "truckTap",
-                      truck: {
-                        latitude: location.lat,
-                        longitude: location.lng,
-                      },
-                    })
-                  );
-                });
+                
+
+
+marker.on("click", () => {
+  window.ReactNativeWebView.postMessage(
+    JSON.stringify({
+      type: "truckTap",
+      truckId: truck.id,
+    })
+  );
+});
+
               }
 
               let popupContent =

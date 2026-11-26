@@ -12,7 +12,8 @@ import {
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { onAuthStateChanged } from "firebase/auth";
-
+//import "react-native-gesture-handler";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { Asset } from "expo-asset";
 import { useEffect, useState } from "react";
 import { StatusBar } from "expo-status-bar";
@@ -50,10 +51,7 @@ function MainTabNavigator() {
       {/* 3 buttons at the bottom nav bar */}
       <Tab.Screen name="Search" component={SearchScreen} />
       <Tab.Screen name="Map" component={MapScreen} />
-      <Tab.Screen
-        name="Settings"
-        component={SettingsScreen}
-      />
+      <Tab.Screen name="Settings" component={SettingsScreen} />
     </Tab.Navigator>
   );
 }
@@ -61,9 +59,11 @@ function MainTabNavigator() {
 // NavigationContainer created with the use of ChatGPT for passing the props to the MainTabNavigator.
 export default function App() {
   return (
-    <ThemeProvider>
-      <AppContent />
-    </ThemeProvider>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <ThemeProvider>
+        <AppContent />
+      </ThemeProvider>
+    </GestureHandlerRootView>
   );
 }
 
@@ -106,10 +106,7 @@ function AppContent() {
       <Stack.Navigator screenOptions={{ headerShown: false }}>
         {isSignedIn ? (
           <>
-            <Stack.Screen
-              name="SignedIn"
-              component={MainTabNavigator}
-            />
+            <Stack.Screen name="SignedIn" component={MainTabNavigator} />
             <Stack.Screen
               name="ScanFoodTruck"
               component={ScanFoodTruckScreen}

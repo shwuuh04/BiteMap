@@ -202,9 +202,103 @@ export const searchStyles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
   },
-  
+
   deleteButton: {
     marginLeft: "auto",
+  },
+});
+
+export const bottomStyles = StyleSheet.create({
+  bottomSheet: {
+    position: "absolute",
+    left: 0,
+    right: 0,
+    bottom: 0,
+    height: 450,
+    backgroundColor: "white",
+    borderTopLeftRadius: 25,
+    borderTopRightRadius: 25,
+    paddingHorizontal: 20,
+    paddingBottom: 30,
+    elevation: 10,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: -3 },
+    shadowOpacity: 0.15,
+    shadowRadius: 5,
+  },
+
+  dragArea: {
+    alignItems: "center",
+    paddingVertical: 15,
+  },
+
+  dragHandle: {
+    width: 45,
+    height: 5,
+    borderRadius: 5,
+    backgroundColor: "#CCCCCC",
+    marginBottom: 15,
+  },
+
+  heading: {
+    fontSize: 20,
+    fontWeight: "bold",
+    alignSelf: "flex-start",
+  },
+
+  truckItem: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    paddingVertical: 15,
+    borderBottomWidth: 1,
+    borderBottomColor: "#EEEEEE",
+  },
+
+  truckName: {
+    fontSize: 16,
+    fontWeight: "bold",
+    color: "#222222",
+  },
+
+  truckType: {
+    fontSize: 14,
+    color: "#777777",
+    marginTop: 4,
+  },
+
+  arrow: {
+    fontSize: 26,
+    color: "#888888",
+  },
+
+  truckDetails: {
+    paddingTop: 10,
+  },
+
+  coordinates: {
+    fontSize: 14,
+    color: "#777777",
+    marginTop: 8,
+  },
+
+  button: {
+    backgroundColor: "#333333",
+    padding: 12,
+    borderRadius: 8,
+    marginTop: 20,
+    alignItems: "center",
+  },
+
+  buttonText: {
+    color: "white",
+    fontWeight: "bold",
+  },
+
+  emptyText: {
+    textAlign: "center",
+    color: "#777777",
+    marginTop: 25,
   },
 });
 
