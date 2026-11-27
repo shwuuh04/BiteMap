@@ -521,16 +521,34 @@ export const ScanFoodTruckStyles = StyleSheet.create({
     padding: 25,
     backgroundColor: "#F5F5F5",
   },
+  containerLight: {
+    backgroundColor: COLORS.background,
+  },
+  containerDark: {
+    backgroundColor: COLORS.darkBackground,
+  },
 
   title: {
     fontSize: 24,
     fontWeight: "bold",
     marginBottom: 25,
   },
+  titleLight: {
+    color: COLORS.lightText,
+  },
+  titleDark: {
+    color: COLORS.darkText,
+  },
 
   label: {
     fontSize: 16,
     marginBottom: 10,
+  },
+  labelLight: {
+    color: COLORS.lightText,
+  },
+  labelDark: {
+    color: COLORS.darkText,
   },
   subLabel: {
     color: "#666",
@@ -538,6 +556,12 @@ export const ScanFoodTruckStyles = StyleSheet.create({
     lineHeight: 18,
     marginTop: -4,
     marginBottom: 20,
+  },
+  subLabelLight: {
+    color: COLORS.lightText,
+  },
+  subLabelDark: {
+    color: COLORS.darkText,
   },
   cameraContainer: {
     height: 360,
@@ -556,9 +580,21 @@ export const ScanFoodTruckStyles = StyleSheet.create({
     justifyContent: "center",
     padding: 16,
   },
+  cameraPermissionLight: {
+    backgroundColor: COLORS.darkBackground,
+  },
+  cameraPermissionDark: {
+    backgroundColor: COLORS.darkCard,
+  },
   cameraMessage: {
     color: "#fff",
     textAlign: "center",
+  },
+  cameraMessageLight: {
+    color: COLORS.white,
+  },
+  cameraMessageDark: {
+    color: COLORS.darkText,
   },
   newLocationContainer: {
     width: "100%",
@@ -581,6 +617,16 @@ export const ScanFoodTruckStyles = StyleSheet.create({
     paddingHorizontal: 12,
     paddingVertical: 10,
     backgroundColor: "#fff",
+  },
+  inputLight: {
+    borderColor: COLORS.lightBorder,
+    backgroundColor: COLORS.lightCard,
+    color: COLORS.lightText,
+  },
+  inputDark: {
+    borderColor: COLORS.darkBorder,
+    backgroundColor: COLORS.darkCard,
+    color: COLORS.darkText,
   },
 
   button: {

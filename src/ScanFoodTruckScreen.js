@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { Alert, Text, TextInput, TouchableOpacity, View } from "react-native";
-import { useIsFocused } from "@react-navigation/native";
+import { useIsFocused, useTheme } from "@react-navigation/native";
 import { collection, getDocs, query, where } from "firebase/firestore";
 import { db } from "./firebaseConfig.js";
-import { ScanFoodTruckStyles as styles } from "./styles.js";
+import { COLORS, ScanFoodTruckStyles as styles } from "./styles.js";
 import { CameraView, useCameraPermissions } from "expo-camera";
 import * as Location from "expo-location";
 
@@ -11,6 +11,7 @@ export default function ScanFoodTruckScreen({ navigation }) {
   const [truckId, setTruckId] = useState("");
   const [cameraPermission, requestCameraPermission] = useCameraPermissions();
   const isFocused = useIsFocused();
+  const { dark } = useTheme();
 
   // request camera permission
   async function requestCameraAccess() {
@@ -114,11 +115,29 @@ export default function ScanFoodTruckScreen({ navigation }) {
   }
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Verify Food Truck Location</Text>
+    <View style={[
+      styles.container,
+      dark ? styles.containerDark : styles.containerLight,
+    ]}>
+      <Text style={[
+        styles.title,
+        dark ? styles.titleDark : styles.titleLight,
+      ]}>
+        Verify Food Truck Location
+      </Text>
       {/* image entry */}
-      <Text style={styles.label}>Scan QR Code</Text>
-      <Text style={styles.subLabel}>Can&apos;t find the QR code? Ask the vendor for help!</Text>
+      <Text style={[
+        styles.label,
+        dark ? styles.labelDark : styles.labelLight,
+      ]}>
+        Scan QR Code
+      </Text>
+      <Text style={[
+        styles.subLabel,
+        dark ? styles.subLabelDark : styles.subLabelLight,
+      ]}>
+        Can&apos;t find the QR code? Ask the vendor for help!
+      </Text>
         {/* camera view */}
         <View style={styles.cameraContainer}>
           {cameraPermission?.granted && isFocused ? (
@@ -131,8 +150,18 @@ export default function ScanFoodTruckScreen({ navigation }) {
               }}
             />
           ) : (
-            <View style={styles.cameraPermission}>
-              <Text style={styles.cameraMessage}>
+            <View style={[
+              styles.cameraPermission,
+              dark
+                ? styles.cameraPermissionDark
+                : styles.cameraPermissionLight,
+            ]}>
+              <Text style={[
+                styles.cameraMessage,
+                dark
+                  ? styles.cameraMessageDark
+                  : styles.cameraMessageLight,
+              ]}>
                 {!cameraPermission
                   ? "Checking camera permission..."
                   : cameraPermission.granted
@@ -152,12 +181,21 @@ export default function ScanFoodTruckScreen({ navigation }) {
       </View>
 
       {/* manual entry */}
-      <Text style={styles.label}>Manually Enter truck ID</Text>
+      <Text style={[
+        styles.label,
+        dark ? styles.labelDark : styles.labelLight,
+      ]}>
+        Manually Enter truck ID
+      </Text>
       <TextInput
-        style={styles.input}
+        style={[
+          styles.input,
+          dark ? styles.inputDark : styles.inputLight,
+        ]}
         value={truckId}
         onChangeText={setTruckId}
         placeholder="eg. 1234567ab"
+        placeholderTextColor={dark ? COLORS.darkText : COLORS.lightText}
         autoCapitalize="none"
       />
       <TouchableOpacity style={styles.button} onPress={verifyTruckId}>

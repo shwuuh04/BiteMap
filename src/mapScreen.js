@@ -154,7 +154,7 @@ export default function MapScreen({ navigation, route }) {
   function recenterOnTruck(truck) {
     setSelectedTruck(truck);
 
-    mapRef.current?.recenter(truck.latitude, truck.longitude);
+    mapRef.current?.recenter(truck.latitude, truck.longitude, true);
   }
 
   // Actual view

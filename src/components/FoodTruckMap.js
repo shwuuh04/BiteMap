@@ -110,10 +110,21 @@ const FoodTruckMap = forwardRef(function FoodTruckMap(
 
   // Copilot helped add search results to the map's starting view and recenter control.
   useImperativeHandle(ref, () => ({
-    recenter(latitude, longitude) {
+    recenter(latitude, longitude, offsetForBottomSheet = false) {
       webViewRef.current?.injectJavaScript(`
         if (window.foodTruckMap) {
-          window.foodTruckMap.setView([${latitude}, ${longitude}], 14);
+          const map = window.foodTruckMap;
+          map.setView([${latitude}, ${longitude}], 14);
+
+          if (${offsetForBottomSheet ? "true" : "false"}) {
+            const mapSize = map.getSize();
+            const bottomSheetHeight = 450;
+            const visibleMapHeight = Math.max(0, mapSize.y - bottomSheetHeight);
+            const targetY = visibleMapHeight / 2;
+            const yOffset = targetY - (mapSize.y / 2);
+
+            map.panBy([0, -yOffset], { animate: true });
+          }
         }
         true;
       `);
@@ -210,10 +221,10 @@ marker.on("click", () => {
 
               }
 
-              let popupContent =
-                "<div style='width:200px;'>" +
-                "<h3>" + truck.name + "</h3>" +
-                "<p>" + truck.type + "</p>";
+              // let popupContent =
+              //   "<div style='width:200px;'>" +
+              //   "<h3>" + truck.name + "</h3>" +
+              //   "<p>" + truck.type + "</p>";
 
               if (truck.truckPhoto) {
                 popupContent +=

@@ -52,6 +52,14 @@ export default function BottomSheet({
     translateY.set(withSpring(350));
   }
 
+  useEffect(() => {
+    if (selectedTruck) {
+      translateY.set(withSpring(0));
+    } else {
+      translateY.set(withSpring(350));
+    }
+  }, [selectedTruck, translateY]);
+
   // Fetch reviews for each selection and ignore late results after switching trucks.
   useEffect(() => {
     if (!selectedTruck) {

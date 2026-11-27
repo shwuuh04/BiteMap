@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Alert, Text, TouchableOpacity, View } from "react-native";
+import { useTheme } from "@react-navigation/native";
 import { doc, updateDoc } from "firebase/firestore";
 import { db } from "./firebaseConfig.js";
 import { ScanFoodTruckStyles as styles } from "./styles.js";
@@ -7,6 +8,7 @@ import NewLocationMap from "./components/newLocationMap.js";
 
 export default function ConfirmUpdateScreen({ route, navigation }) {
   const [isUpdating, setIsUpdating] = useState(false);
+  const { dark } = useTheme();
   const truck = route?.params?.truck;
   const newLocation = route?.params?.newLocation;
 
@@ -42,13 +44,36 @@ export default function ConfirmUpdateScreen({ route, navigation }) {
   }
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Update this Vendor?</Text>
+    <View style={[
+      styles.container,
+      dark ? styles.containerDark : styles.containerLight,
+    ]}>
+      <Text style={[
+        styles.title,
+        dark ? styles.titleDark : styles.titleLight,
+      ]}>
+        Update this Vendor?
+      </Text>
       
       {/* truck details */}
-      <Text style={styles.label}>Name: {truck?.name ?? "Unavailable"}</Text>
-      <Text style={styles.label}>Truck ID: {truck?.truckID ?? "Unavailable"}</Text>
-      <Text style={styles.label}>New Location: {formatLocation(newLocation)}</Text>
+      <Text style={[
+        styles.label,
+        dark ? styles.labelDark : styles.labelLight,
+      ]}>
+        Name: {truck?.name ?? "Unavailable"}
+      </Text>
+      <Text style={[
+        styles.label,
+        dark ? styles.labelDark : styles.labelLight,
+      ]}>
+        Truck ID: {truck?.truckID ?? "Unavailable"}
+      </Text>
+      <Text style={[
+        styles.label,
+        dark ? styles.labelDark : styles.labelLight,
+      ]}>
+        New Location: {formatLocation(newLocation)}
+      </Text>
 
       {/* map and pin of new location, not interactable */}
       <NewLocationMap
