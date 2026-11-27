@@ -3,6 +3,7 @@
 // npx expo install expo-location
 // npx expo install @react-native-async-storage/async-storage
 // npx expo install expo-camera
+// npx expo install react-native-gesture-handler
 
 import {
   NavigationContainer,

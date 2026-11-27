@@ -113,6 +113,7 @@ export default function SettingsScreen() {
                   onPress: async () => {
                     await changeTheme(false);
                     try {
+                      await clearSearchHistory();
                       await signOut(auth);
                     } catch {
                       Alert.alert(

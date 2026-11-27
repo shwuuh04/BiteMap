@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, StyleSheet, FlatList, Pressable } from "react-native";
+import { View, Text, FlatList, TouchableOpacity } from "react-native";
 
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import { bottomStyles as styles } from "./styles.js";
@@ -17,6 +17,10 @@ export default function BottomSheet({
 }) {
   const translateY = useSharedValue(350);
   const startY = useSharedValue(350);
+
+  function collapseSheet() {
+    translateY.set(withSpring(350));
+  }
 
   // Handles dragging the bottom sheet
   const pan = Gesture.Pan()
@@ -57,37 +61,43 @@ export default function BottomSheet({
           <View style={styles.dragHandle} />
 
           <Text style={styles.heading}>
-            {selectedTruck ? selectedTruck.name : "Nearby Food Trucks"}
+            Nearby Food Trucks
           </Text>
+
+          <TouchableOpacity
+            style={styles.closeTabButton}
+            onPress={selectedTruck ? onClearSelection : collapseSheet}
+          >
+            <Text style={styles.buttonText}>X</Text>
+          </TouchableOpacity>
         </View>
       </GestureDetector>
 
       {selectedTruck ? (
         <View style={styles.truckDetails}>
-          <Text style={styles.truckName}>{selectedTruck.name}</Text>
+          <Text style={styles.truckName}>
+            {selectedTruck.name}
+          </Text>
 
           <Text style={styles.truckType}>
-            {selectedTruck.type || selectedTruck.cuisineType}
+            {selectedTruck.cuisineType}
           </Text>
 
-          <Text style={styles.coordinates}>
-            Latitude: {selectedTruck.latitude}
+          <Text style={styles.truckDetails}>
+            {selectedTruck.description}
           </Text>
 
-          <Text style={styles.coordinates}>
-            Longitude: {selectedTruck.longitude}
-          </Text>
-
-          <Pressable style={styles.button} onPress={onClearSelection}>
-            <Text style={styles.buttonText}>Back to food trucks</Text>
-          </Pressable>
+          <TouchableOpacity style={styles.button} onPress={onClearSelection}>
+            <Text style={styles.buttonText}>Get Directions [ext]</Text>
+          </TouchableOpacity>
+          
         </View>
       ) : (
         <FlatList
           data={foodTrucks}
           keyExtractor={(item) => item.id}
           renderItem={({ item }) => (
-            <Pressable
+            <TouchableOpacity
               style={styles.truckItem}
               onPress={() => onSelectTruck?.(item)}
             >
@@ -100,7 +110,7 @@ export default function BottomSheet({
               </View>
 
               <Text style={styles.arrow}>›</Text>
-            </Pressable>
+            </TouchableOpacity>
           )}
           ListEmptyComponent={
             <Text style={styles.emptyText}>No food trucks found nearby.</Text>

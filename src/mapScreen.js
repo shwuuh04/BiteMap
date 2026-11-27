@@ -76,6 +76,7 @@ export default function MapScreen({ navigation, route }) {
           const validTruck =
             typeof data.name === "string" &&
             typeof data.cuisineType === "string" &&
+            typeof data.description === "string" &&
             Number.isFinite(mapLocation?.latitude) &&
             Number.isFinite(mapLocation?.longitude);
 
@@ -91,6 +92,8 @@ export default function MapScreen({ navigation, route }) {
               id: truckDoc.id,
               name: data.name,
               type: data.cuisineType,
+              cuisineType: data.cuisineType,
+              description: data.description,
               latitude: mapLocation.latitude,
               longitude: mapLocation.longitude,
 

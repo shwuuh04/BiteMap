@@ -246,6 +246,18 @@ export const bottomStyles = StyleSheet.create({
     alignSelf: "flex-start",
   },
 
+  closeTabButton: {
+    position: "absolute",
+    top: 10,
+    right: 0,
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: "#333333",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+
   truckItem: {
     flexDirection: "row",
     justifyContent: "space-between",
