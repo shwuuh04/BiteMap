@@ -36,6 +36,8 @@ const SEARCH_ICONS = [
   require("./assets/historyIcon.png"),
   require("./assets/deleteIcon.png"),
   require("./assets/scanIcon.png"),
+  require("./assets/starIcon.png"),
+  require("./assets/directionsIcon.png"),
 ];
 
 // ChatGPT helped create MainTabNavigator; Firebase auth state now controls access to the signed-in tabs.

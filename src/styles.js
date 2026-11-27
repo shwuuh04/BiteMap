@@ -273,6 +273,37 @@ export const bottomStyles = StyleSheet.create({
     color: "#222222",
   },
 
+  truckNameRow: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+
+  truckRating: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginLeft: 8,
+  },
+
+  starIconStyle: {
+    width: 18,
+    height: 18,
+    resizeMode: "contain",
+  },
+
+  directionsIcon: {
+    width: 18,
+    height: 18,
+    marginLeft: 8,
+    resizeMode: "contain",
+  },
+
+  truckRatingText: {
+    marginLeft: 4,
+    fontSize: 14,
+    fontWeight: "bold",
+    color: "#222222",
+  },
+
   truckType: {
     fontSize: 14,
     color: "#777777",
@@ -288,6 +319,63 @@ export const bottomStyles = StyleSheet.create({
     paddingTop: 10,
   },
 
+  // Layout for the selected truck's review text, rating, and photo row.
+  detailsScroll: {
+    flex: 1,
+  },
+
+  reviewSection: {
+    marginTop: 16,
+    paddingTop: 12,
+    borderTopWidth: 1,
+    borderTopColor: "#EEEEEE",
+  },
+
+  reviewHeading: {
+    fontSize: 18,
+    fontWeight: "bold",
+    color: "#222222",
+  },
+
+  reviewCarousel: {
+    marginTop: 10,
+  },
+
+  reviewCarouselContent: {
+    paddingRight: 8,
+  },
+
+  reviewCard: {
+    width: 168,
+    marginRight: 12,
+    padding: 8,
+    borderWidth: 1,
+    borderColor: "#DDDDDD",
+    borderRadius: 12,
+    backgroundColor: "#FAFAFA",
+  },
+
+  reviewImage: {
+    width: "100%",
+    height: 120,
+    borderRadius: 8,
+    backgroundColor: "#EEEEEE",
+  },
+
+  reviewTitle: {
+    fontSize: 14,
+    fontWeight: "bold",
+    color: "#222222",
+    minHeight: 44,
+    marginBottom: 8,
+  },
+
+  reviewMessage: {
+    fontSize: 14,
+    color: "#777777",
+    marginTop: 8,
+  },
+
   coordinates: {
     fontSize: 14,
     color: "#777777",
@@ -296,10 +384,13 @@ export const bottomStyles = StyleSheet.create({
 
   button: {
     backgroundColor: "#333333",
+    borderWidth: 1,
     padding: 12,
     borderRadius: 8,
     marginTop: 20,
+    flexDirection: "row",
     alignItems: "center",
+    justifyContent: "center",
   },
 
   buttonText: {
