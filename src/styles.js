@@ -202,7 +202,12 @@ export const searchStyles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
   },
-
+  blankHistoryText: {
+    alignSelf: "center",
+    textAlign: "center",
+    width: "80%",
+    paddingTop: 80,
+  },
   deleteButton: {
     marginLeft: "auto",
   },

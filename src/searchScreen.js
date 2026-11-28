@@ -151,7 +151,6 @@ export default function SearchScreen({ navigation }) {
           }
 
           setSearch("");
-          console.log(dark);
           openMapSearch(searchTerm);
         }}
       >
@@ -163,7 +162,14 @@ export default function SearchScreen({ navigation }) {
         data={searchHistory}
         keyExtractor={(item, index) => `${index}-${item}`}
         ListEmptyComponent={
-          <Text style={historyTextStyle}>No history to show.</Text>
+          <Text
+            style={[
+              styles.blankHistoryText,
+              historyTextStyle,
+            ]}
+          >
+            No search history
+          </Text>
         }
         renderItem={({ item, index }) => (
           <View
